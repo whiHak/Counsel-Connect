@@ -1,0 +1,51 @@
+"use client";
+
+import { Suspense, useState } from "react";
+import CounselorSearch, { CounselorFilters } from "./components/counselor-search";
+import CounselorList from "./components/counselor-list";
+import { Skeleton } from "@/components/ui/skeleton";
+
+export default function CounselorsPage() {
+  const [filters, setFilters] = useState<CounselorFilters>({
+    search: "",
+    specialization: "",
+    language: "",
+    maxPrice: 50,
+    minExperience: 0,
+  });
+
+  return (
+    <div className="container mx-auto px-4 py-4 ">
+      <h1 className="text-3xl font-bold mb-8">Find Your Counselor</h1>
+      
+      <div className="grid lg:grid-cols-[400px_1fr] gap-8">
+        <aside className="space-y-6">
+          <CounselorSearch onFiltersChange={setFilters} />
+        </aside>
+        
+        <main>
+          <Suspense fallback={<CounselorListSkeleton />}>
+            <CounselorList filters={filters} />
+          </Suspense>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+function CounselorListSkeleton() {
+  return (
+    <div className="space-y-6">
+      {Array(6).fill(null).map((_, i) => (
+        <div key={i} className="flex gap-4 p-4 border rounded-lg">
+          <Skeleton className="h-24 w-24 rounded-full" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-4 w-full" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+} 
