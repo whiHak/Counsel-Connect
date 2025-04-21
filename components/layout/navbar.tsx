@@ -75,14 +75,24 @@ export function Navbar() {
                 </Button>
               </Link>
               {session?.user.role === 'CLIENT' && (
+                <>
+                <Link href="/messages">
+                <Button 
+                  variant="ghost" 
+                  className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
+                >
+                  Messages
+                </Button>
+              </Link>
                 <Link href="/appointments">
                   <Button 
                     variant="ghost" 
-                    className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                    className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
                   >
                     My Appointments
                   </Button>
                 </Link>
+                </>
               )}
               {session?.user.role === 'COUNSELOR' && (
                 <Link href="/dashboard">

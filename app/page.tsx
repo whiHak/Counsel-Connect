@@ -111,7 +111,7 @@ export default function Home() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Button size="lg" className="bg-gradient-primary hover:opacity-90 text-white" asChild>
-                  <Link href="/counselors">
+                  <Link href="/counselors" className="z-10">
                     Find a Counselor <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
