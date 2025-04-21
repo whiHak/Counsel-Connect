@@ -95,6 +95,15 @@ export function Navbar() {
                 </>
               )}
               {session?.user.role === 'COUNSELOR' && (
+                <>
+                <Link href="/messages">
+                  <Button 
+                    variant="ghost" 
+                    className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
+                  >
+                    Messages
+                  </Button>
+                </Link>
                 <Link href="/dashboard">
                   <Button 
                     variant="ghost" 
@@ -103,6 +112,7 @@ export function Navbar() {
                     Dashboard
                   </Button>
                 </Link>
+                </>
               )}
             </div>
           </div>
