@@ -1,5 +1,8 @@
+"use client";
+
 import { UploadDropzone } from "@uploadthing/react";
 import { OurFileRouter } from "@/app/api/uploadthing/core";
+import { useToast } from "./use-toast";
 
 interface FileUploadProps {
   onChange: (url?: string) => void;
@@ -12,6 +15,8 @@ export const FileUpload = ({
   value,
   endpoint
 }: FileUploadProps) => {
+  const { toast } = useToast();
+
   return (
     <div className="flex flex-col items-center justify-center w-full">
       {value ? (
@@ -36,14 +41,26 @@ export const FileUpload = ({
           </button>
         </div>
       ) : (
-        <UploadDropzone<OurFileRouter, "counselorDocument">
+        <UploadDropzone<OurFileRouter, typeof endpoint>
           endpoint={endpoint}
           onClientUploadComplete={(res) => {
-            onChange(res?.[0].url);
+            if (res?.[0]?.url) {
+              onChange(res[0].url);
+              toast({
+                title: "File uploaded successfully",
+                description: "Your file has been uploaded.",
+                variant: "default",
+              });
+            }
           }}
           onUploadError={(error: Error) => {
-            console.log(error);
+            toast({
+              title: "Upload failed",
+              description: error.message || "Something went wrong",
+              variant: "destructive",
+            });
           }}
+          config={{ mode: "auto" }}
         />
       )}
     </div>

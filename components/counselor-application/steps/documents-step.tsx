@@ -22,7 +22,7 @@ export const DocumentsStep = ({ form }: DocumentsStepProps) => {
                 value={field.value}
                 onChange={field.onChange}
               />
-              <FormMessage />
+              <FormMessage className="text-red-500" />
             </FormItem>
           )}
         />
@@ -38,7 +38,7 @@ export const DocumentsStep = ({ form }: DocumentsStepProps) => {
                 value={field.value}
                 onChange={field.onChange}
               />
-              <FormMessage />
+              <FormMessage className="text-red-500" />
             </FormItem>
           )}
         />
@@ -54,7 +54,7 @@ export const DocumentsStep = ({ form }: DocumentsStepProps) => {
                 value={field.value}
                 onChange={field.onChange}
               />
-              <FormMessage />
+              <FormMessage className="text-red-500" />
             </FormItem>
           )}
         />
@@ -70,7 +70,7 @@ export const DocumentsStep = ({ form }: DocumentsStepProps) => {
                 value={field.value}
                 onChange={field.onChange}
               />
-              <FormMessage />
+              <FormMessage className="text-red-500" />
             </FormItem>
           )}
         />
@@ -86,7 +86,7 @@ export const DocumentsStep = ({ form }: DocumentsStepProps) => {
                 value={field.value}
                 onChange={field.onChange}
               />
-              <FormMessage />
+              <FormMessage className="text-red-500" />
             </FormItem>
           )}
         />
@@ -102,7 +102,7 @@ export const DocumentsStep = ({ form }: DocumentsStepProps) => {
                 value={field.value}
                 onChange={field.onChange}
               />
-              <FormMessage />
+              <FormMessage className="text-red-500" />
             </FormItem>
           )}
         />
