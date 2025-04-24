@@ -113,7 +113,10 @@ const counselorApplicationSchema = new mongoose.Schema({
   documents: {
     identificationUrl: { type: String, required: true },
     photographUrl: { type: String, required: true },
-    workExperienceUrl: { type: String, required: true }
+    workExperienceUrl: { type: String, required: true },
+    professionalLicenseUrl: { type: String, required: true },
+    educationalCredentialsUrl: { type: String, required: true },
+    cvUrl: { type: String, required: true }
   },
   status: {
     type: String,

@@ -1,20 +1,29 @@
 "use client";
 
-import Link from 'next/link';
-import { useSession, signIn, signOut } from 'next-auth/react';
-import { Button } from '../ui/button';
-import { Menu, User, MessageSquare, Calendar, LogOut, Heart, Settings, Sparkles } from 'lucide-react';
-import Image from 'next/image';
+import Link from "next/link";
+import { useSession, signIn, signOut } from "next-auth/react";
+import { Button } from "../ui/button";
+import {
+  Menu,
+  User,
+  MessageSquare,
+  Calendar,
+  LogOut,
+  Heart,
+  Settings,
+  Sparkles,
+} from "lucide-react";
+import Image from "next/image";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
-import { useState, useEffect } from 'react';
-import { cn } from '@/lib/utils';
-import { motion, AnimatePresence } from 'framer-motion';
+} from "@/components/ui/dropdown-menu";
+import { useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function Navbar() {
   const { data: session } = useSession();
@@ -28,19 +37,19 @@ export function Navbar() {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [scrolled]);
 
   return (
-    <motion.nav 
+    <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.3 }}
       className={cn(
         "fixed top-0 w-full z-50 transition-all duration-300",
-        scrolled 
-          ? "bg-background/80 backdrop-blur-xl border-b border-border/50 shadow-sm" 
+        scrolled
+          ? "bg-background/80 backdrop-blur-xl border-b border-border/50 shadow-sm"
           : "bg-transparent"
       )}
     >
@@ -59,75 +68,75 @@ export function Navbar() {
 
             <div className="hidden md:flex items-center space-x-1">
               <Link href="/counselors">
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
                 >
                   Find Counselors
                 </Button>
               </Link>
               <Link href="/how-it-works">
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
                 >
                   How It Works
                 </Button>
               </Link>
-              {session?.user.role === 'CLIENT' && (
+              {session?.user.role === "CLIENT" && (
                 <>
-                <Link href="/messages">
-                <Button 
-                  variant="ghost" 
-                  className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
-                >
-                  Messages
-                </Button>
-              </Link>
-                <Link href="/appointments">
-                  <Button 
-                    variant="ghost" 
-                    className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
-                  >
-                    My Appointments
-                  </Button>
-                </Link>
-                <Link href="/become-counselor">
-                  <Button 
-                    variant="ghost" 
-                    className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
-                  >
-                    Become a Counselor
-                  </Button>
-                </Link>
+                  <Link href="/messages">
+                    <Button
+                      variant="ghost"
+                      className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
+                    >
+                      Messages
+                    </Button>
+                  </Link>
+                  <Link href="/appointments">
+                    <Button
+                      variant="ghost"
+                      className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
+                    >
+                      My Appointments
+                    </Button>
+                  </Link>
+                  <Link href="/become-counselor">
+                    <Button
+                      variant="ghost"
+                      className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
+                    >
+                      Become a Counselor
+                    </Button>
+                  </Link>
                 </>
               )}
-              {session?.user.role === 'COUNSELOR' && (
+              {session?.user.role === "COUNSELOR" && (
                 <>
-                <Link href="/messages">
-                  <Button 
-                    variant="ghost" 
-                    className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
-                  >
-                    Messages
-                  </Button>
-                </Link>
-                <Link href="/dashboard">
-                  <Button 
-                    variant="ghost" 
-                    className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-                  >
-                    Dashboard
-                  </Button>
-                </Link>
+                  <Link href="/messages">
+                    <Button
+                      variant="ghost"
+                      className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
+                    >
+                      Messages
+                    </Button>
+                  </Link>
+                  <Link href="/dashboard">
+                    <Button
+                      variant="ghost"
+                      className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                    >
+                      Dashboard
+                    </Button>
+                  </Link>
                 </>
               )}
             </div>
           </div>
 
           <AnimatePresence>
-            <motion.div 
-              className="flex items-center space-x-4"
+            <motion.div
+              className="flex items-center space-x-4 bg-white"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
@@ -135,14 +144,14 @@ export function Navbar() {
               {session ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       className="relative h-10 w-10 rounded-full overflow-hidden border-2 border-primary/20 hover:border-primary/40 transition-colors"
                     >
                       {session.user.image ? (
                         <Image
                           src={session.user.image}
-                          alt={session.user.name || ''}
+                          alt={session.user.name || ""}
                           fill
                           className="rounded-full object-cover"
                         />
@@ -152,8 +161,8 @@ export function Navbar() {
                       <span className="absolute bottom-0 right-0 w-3 h-3 bg-primary rounded-full border-2 border-background"></span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent 
-                    align="end" 
+                  <DropdownMenuContent
+                    align="end"
                     className="w-64 mt-2 rounded-xl border border-border/50 bg-card/95 backdrop-blur-xl p-2"
                   >
                     <div className="flex items-start gap-3 p-3">
@@ -161,7 +170,7 @@ export function Navbar() {
                         {session.user.image ? (
                           <Image
                             src={session.user.image}
-                            alt={session.user.name || ''}
+                            alt={session.user.name || ""}
                             fill
                             className="rounded-full object-cover"
                           />
@@ -170,8 +179,12 @@ export function Navbar() {
                         )}
                       </div>
                       <div className="flex flex-col">
-                        <p className="text-sm font-medium line-clamp-1">{session.user.name}</p>
-                        <p className="text-xs text-muted-foreground line-clamp-1">{session.user.email}</p>
+                        <p className="text-sm font-medium line-clamp-1">
+                          {session.user.name}
+                        </p>
+                        <p className="text-xs text-muted-foreground line-clamp-1">
+                          {session.user.email}
+                        </p>
                       </div>
                     </div>
                     <DropdownMenuSeparator className="my-2" />
@@ -192,13 +205,28 @@ export function Navbar() {
                         <Heart className="mr-2 h-4 w-4 text-primary" />
                         <Link href="/favorites">Favorites</Link>
                       </DropdownMenuItem>
+                      {session?.user.role === "COUNSELOR" && (
+                        <DropdownMenuItem className="flex items-center rounded-lg cursor-pointer hover:bg-primary/10 transition-colors">
+                          <Settings className="mr-2 h-4 w-4 text-primary" />
+                          <Link href="/dashboard">Dashboard</Link>
+                        </DropdownMenuItem>
+                      )}
+                      {session?.user.role === "CLIENT" && (
+                        <DropdownMenuItem className="flex items-center rounded-lg cursor-pointer hover:bg-primary/10 transition-colors">
+                          <Settings className="mr-2 h-4 w-4 text-primary" />
+                          <Link href="/become-counselor">
+                            Become a Counselor
+                          </Link>
+                        </DropdownMenuItem>
+                      )}
+
                       <DropdownMenuItem className="flex items-center rounded-lg cursor-pointer hover:bg-primary/10 transition-colors">
                         <Settings className="mr-2 h-4 w-4 text-primary" />
                         <Link href="/settings">Settings</Link>
                       </DropdownMenuItem>
                     </div>
                     <DropdownMenuSeparator className="my-2" />
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                       className="flex items-center rounded-lg cursor-pointer hover:bg-destructive/10 hover:text-destructive transition-colors"
                       onClick={() => signOut()}
                     >
@@ -209,15 +237,15 @@ export function Navbar() {
                 </DropdownMenu>
               ) : (
                 <div className="flex items-center space-x-3">
-                  <Button 
-                    variant="ghost" 
-                    onClick={() => signIn('google')}
+                  <Button
+                    variant="ghost"
+                    onClick={() => signIn("google")}
                     className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
                   >
                     Sign In
                   </Button>
-                  <Button 
-                    onClick={() => signIn('google')}
+                  <Button
+                    onClick={() => signIn("google")}
                     className="bg-[linear-gradient(to_right,#7C3AED,#2563EB)] hover:opacity-90 text-white gap-2 shadow-lg shadow-primary/25 cursor-pointer"
                   >
                     <Sparkles className="h-4 w-4" />
@@ -231,4 +259,4 @@ export function Navbar() {
       </div>
     </motion.nav>
   );
-} 
+}

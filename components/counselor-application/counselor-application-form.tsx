@@ -33,7 +33,6 @@ const formSchema = z.object({
   address: z.string().min(1, "Address is required"),
   
   // Professional Info
-  education: z.string().min(1, "Education is required"),
   specialization: z.string().min(1, "Specialization is required"),
   experience: z.string().min(1, "Years of experience is required"),
   licenseNumber: z.string().min(1, "License number is required"),
@@ -93,7 +92,7 @@ async function uploadFile(file: File, type: string) {
   return data.url
 }
 
-export function CounselorApplicationForm() {
+export function CounselorApplicationForm({isPending, setIsPending}: {isPending: boolean, setIsPending: React.Dispatch<React.SetStateAction<boolean>>}) {
   const [currentStep, setCurrentStep] = React.useState(1)
   const [isSubmitting, setIsSubmitting] = React.useState(false)
   const { toast } = useToast()
@@ -106,7 +105,6 @@ export function CounselorApplicationForm() {
       lastName: "",
       email: "",
       phone: "",
-      education: "",
       specialization: "",
       experience: "",
       licenseNumber: "",
@@ -180,18 +178,25 @@ export function CounselorApplicationForm() {
         throw new Error("Failed to submit application")
       }
 
+      const result = await response.json()
+      if(result.application.status !== "PENDING") {
+        setIsPending(true)
+      }
       toast({
         title: "Application Submitted Successfully! 🎉",
         description: "We'll review your application and get back to you soon.",
         duration: 5000,
+        style: { color: "green", backgroundColor: "white" },
       })
 
-      router.push("/dashboard")
+      window.location.reload()
+
     } catch (error) {
       toast({
         title: "Submission Failed",
         description: "There was an error submitting your application. Please try again.",
         variant: "destructive",
+        style: { color: "red", backgroundColor: "white" },
         duration: 5000,
       })
     } finally {
@@ -208,6 +213,7 @@ export function CounselorApplicationForm() {
         title: "Validation Error",
         description: "Please fill in all required fields correctly before proceeding.",
         variant: "destructive",
+        style: { color: "red", backgroundColor: "white" },
       })
     }
   }
@@ -217,6 +223,47 @@ export function CounselorApplicationForm() {
       setCurrentStep(currentStep - 1)
     }
   }
+
+
+
+  if (isPending) {
+    return (
+      <div className="max-w-[1440px] mx-auto px-4 py-10 space-y-6 flex flex-col items-center justify-center text-center">
+        
+        {/* SVG Spinner Animation */}
+        <svg
+          className="w-16 h-16 animate-spin text-violet-600 mb-4"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          ></circle>
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+          ></path>
+        </svg>
+  
+        {/* Headline */}
+        <h2 className=" text-2xl font-bold inset-0 bg-[linear-gradient(to_right,#7C3AED,#2563EB)] bg-clip-text text-transparent">Application Submitted!</h2>
+  
+        {/* Message */}
+        <p className="text-md text-slate-600 max-w-lg">
+          Your application is currently <span className="font-semibold text-slate-700">pending review</span>.
+          We'll notify you once the process is complete. Thank you for your patience!
+        </p>
+      </div>
+    );
+  }
+  
 
   return (
     <div className="max-w-[1440px] mx-auto px-4 py-8 space-y-8 bg-gradient-to-br from-white/80 via-white/70 to-white/60 backdrop-blur-sm rounded-xl shadow-xl border border-white/20">
@@ -232,7 +279,7 @@ export function CounselorApplicationForm() {
                       h-10 w-10 rounded-full flex items-center justify-center text-sm font-semibold
                       transition-all duration-300 ease-in-out
                       ${step.id === currentStep 
-                        ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white ring-2 ring-offset-2 ring-violet-600' 
+                        ? 'bg-gradient-primary text-white ring-2 ring-offset-2 ring-violet-600' 
                         : step.id < currentStep
                         ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white'
                         : 'bg-gradient-to-r from-slate-200 to-slate-300 text-slate-600'
@@ -302,7 +349,7 @@ export function CounselorApplicationForm() {
                   <Button 
                     type="submit" 
                     disabled={isSubmitting}
-                    className="w-32 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+                    className="w-32 bg-gradient-primary hover:from-violet-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer"
                   >
                     {isSubmitting ? (
                       <>
@@ -318,7 +365,7 @@ export function CounselorApplicationForm() {
                     type="button" 
                     onClick={nextStep} 
                     disabled={isSubmitting}
-                    className="w-32 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+                    className="w-32 bg-gradient-primary hover:from-violet-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer"
                   >
                     Next
                     <ChevronRight className="ml-2 h-4 w-4" />

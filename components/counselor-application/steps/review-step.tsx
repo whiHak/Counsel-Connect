@@ -48,7 +48,7 @@ export function ReviewStep({ form }: ReviewStepProps) {
         </section>
       </div>
 
-      <p className="text-sm text-muted-foreground">
+      <p className="text-sm text-muted-foreground text-rose-500">
         Please review all information carefully before submitting your application.
       </p>
     </div>
