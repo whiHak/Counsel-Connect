@@ -92,6 +92,14 @@ export function Navbar() {
                     My Appointments
                   </Button>
                 </Link>
+                <Link href="/become-counselor">
+                  <Button 
+                    variant="ghost" 
+                    className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
+                  >
+                    Become a Counselor
+                  </Button>
+                </Link>
                 </>
               )}
               {session?.user.role === 'COUNSELOR' && (

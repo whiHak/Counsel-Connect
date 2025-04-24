@@ -128,7 +128,7 @@ export default function Home() {
             >
               <div className="relative w-full max-w-2xl mx-auto">
                 <div className="aspect-video relative rounded-xl overflow-hidden shadow-2xl border border-muted/20">
-                  <Image
+        <Image
                     src="https://images.unsplash.com/photo-1573497019418-b400bb3ab074?q=80&w=2000&auto=format&fit=crop"
                     alt="Online counseling session"
                     layout="fill"
@@ -246,7 +246,7 @@ export default function Home() {
             variants={fadeIn}
           >
             <div className="absolute inset-0">
-              <Image
+          <Image
                 src="https://images.unsplash.com/photo-1573497019418-b400bb3ab074?q=80&w=2000&auto=format&fit=crop"
                 alt="Counseling background"
                 layout="fill"
