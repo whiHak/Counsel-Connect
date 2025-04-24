@@ -6,7 +6,7 @@ interface DocumentsStepProps {
   form: UseFormReturn<any>
 }
 
-export function DocumentsStep({ form }: DocumentsStepProps) {
+export const DocumentsStep = ({ form }: DocumentsStepProps) => {
   return (
     <div className="space-y-6">
       <div className="text-xl font-semibold">Required Documents</div>
@@ -16,14 +16,13 @@ export function DocumentsStep({ form }: DocumentsStepProps) {
           name="professionalLicense"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Professional License/Certificate</FormLabel>
+              <FormLabel>Professional License</FormLabel>
               <FileUpload
-                accept=".pdf,.jpg,.jpeg,.png"
-                onChange={(file) => field.onChange(file)}
+                endpoint="counselorDocument"
                 value={field.value}
-                label="Upload License"
-                error={form.formState.errors.professionalLicense?.message as string}
+                onChange={field.onChange}
               />
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -35,12 +34,11 @@ export function DocumentsStep({ form }: DocumentsStepProps) {
             <FormItem>
               <FormLabel>Educational Credentials</FormLabel>
               <FileUpload
-                accept=".pdf,.jpg,.jpeg,.png"
-                onChange={(file) => field.onChange(file)}
+                endpoint="counselorDocument"
                 value={field.value}
-                label="Upload Credentials"
-                error={form.formState.errors.educationalCredentials?.message as string}
+                onChange={field.onChange}
               />
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -50,14 +48,13 @@ export function DocumentsStep({ form }: DocumentsStepProps) {
           name="identificationDocument"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>National ID or Passport</FormLabel>
+              <FormLabel>Identification Document</FormLabel>
               <FileUpload
-                accept=".pdf,.jpg,.jpeg,.png"
-                onChange={(file) => field.onChange(file)}
+                endpoint="counselorDocument"
                 value={field.value}
-                label="Upload ID"
-                error={form.formState.errors.identificationDocument?.message as string}
+                onChange={field.onChange}
               />
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -67,14 +64,13 @@ export function DocumentsStep({ form }: DocumentsStepProps) {
           name="photograph"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Recent Passport-Sized Photograph</FormLabel>
+              <FormLabel>Professional Photograph</FormLabel>
               <FileUpload
-                accept=".jpg,.jpeg,.png"
-                onChange={(file) => field.onChange(file)}
+                endpoint="counselorDocument"
                 value={field.value}
-                label="Upload Photo"
-                error={form.formState.errors.photograph?.message as string}
+                onChange={field.onChange}
               />
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -84,14 +80,13 @@ export function DocumentsStep({ form }: DocumentsStepProps) {
           name="workExperience"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Work Experience Letter(s) or Reference Letters</FormLabel>
+              <FormLabel>Work Experience Documents</FormLabel>
               <FileUpload
-                accept=".pdf"
-                onChange={(file) => field.onChange(file)}
+                endpoint="counselorDocument"
                 value={field.value}
-                label="Upload Letters"
-                error={form.formState.errors.workExperience?.message as string}
+                onChange={field.onChange}
               />
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -103,12 +98,11 @@ export function DocumentsStep({ form }: DocumentsStepProps) {
             <FormItem>
               <FormLabel>Curriculum Vitae (CV)</FormLabel>
               <FileUpload
-                accept=".pdf,.doc,.docx"
-                onChange={(file) => field.onChange(file)}
+                endpoint="counselorDocument"
                 value={field.value}
-                label="Upload CV"
-                error={form.formState.errors.cv?.message as string}
+                onChange={field.onChange}
               />
+              <FormMessage />
             </FormItem>
           )}
         />

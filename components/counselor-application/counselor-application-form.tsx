@@ -41,12 +41,12 @@ const formSchema = z.object({
   bio: z.string().min(50, "Bio must be at least 50 characters").max(500, "Bio must not exceed 500 characters"),
   
   // Documents
-  professionalLicense: fileSchema,
-  educationalCredentials: fileSchema,
-  identificationDocument: fileSchema,
-  photograph: fileSchema,
-  workExperience: fileSchema,
-  cv: fileSchema,
+  professionalLicense: z.string().min(1, "Professional license is required"),
+  educationalCredentials: z.string().min(1, "Educational credentials are required"),
+  identificationDocument: z.string().min(1, "Identification document is required"),
+  photograph: z.string().min(1, "Professional photograph is required"),
+  workExperience: z.string().min(1, "Work experience document is required"),
+  cv: z.string().min(1, "CV is required"),
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -139,39 +139,14 @@ export function CounselorApplicationForm({isPending, setIsPending}: {isPending: 
   async function onSubmit(data: FormValues) {
     try {
       setIsSubmitting(true)
-      
-      // Upload all files first
-      const [
-        licenseUrl,
-        credentialsUrl,
-        idUrl,
-        photoUrl,
-        experienceUrl,
-        cvUrl
-      ] = await Promise.all([
-        uploadFile(data.professionalLicense, "license"),
-        uploadFile(data.educationalCredentials, "credentials"),
-        uploadFile(data.identificationDocument, "id"),
-        uploadFile(data.photograph, "photo"),
-        uploadFile(data.workExperience, "experience"),
-        uploadFile(data.cv, "cv")
-      ])
 
-      // Submit the application
+      // Submit the application with the URLs directly
       const response = await fetch("/api/counselor/apply", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ...data,
-          professionalLicense: licenseUrl,
-          educationalCredentials: credentialsUrl,
-          identificationDocument: idUrl,
-          photograph: photoUrl,
-          workExperience: experienceUrl,
-          cv: cvUrl,
-        }),
+        body: JSON.stringify(data),
       })
 
       if (!response.ok) {
@@ -182,6 +157,7 @@ export function CounselorApplicationForm({isPending, setIsPending}: {isPending: 
       if(result.application.status !== "PENDING") {
         setIsPending(true)
       }
+      
       toast({
         title: "Application Submitted Successfully! 🎉",
         description: "We'll review your application and get back to you soon.",

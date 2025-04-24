@@ -1,78 +1,51 @@
-import * as React from "react"
-import { Upload, X } from "lucide-react"
-import { Button } from "./button"
+import { UploadDropzone } from "@uploadthing/react";
+import { OurFileRouter } from "@/app/api/uploadthing/core";
 
 interface FileUploadProps {
-  accept?: string
-  onChange: (file: File | null) => void
-  value?: File | null
-  label: string
-  error?: string
+  onChange: (url?: string) => void;
+  value: string;
+  endpoint: keyof OurFileRouter;
 }
 
-export function FileUpload({
-  accept = "image/*,application/pdf",
+export const FileUpload = ({
   onChange,
   value,
-  label,
-  error,
-}: FileUploadProps) {
-  const inputRef = React.useRef<HTMLInputElement>(null)
-
-  const handleClick = () => {
-    inputRef.current?.click()
-  }
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null
-    onChange(file)
-  }
-
-  const handleRemove = () => {
-    onChange(null)
-    if (inputRef.current) {
-      inputRef.current.value = ""
-    }
-  }
-
+  endpoint
+}: FileUploadProps) => {
   return (
-    <div className="space-y-2">
-      <input
-        type="file"
-        accept={accept}
-        onChange={handleChange}
-        ref={inputRef}
-        className="hidden"
-      />
-      <div className="flex items-center gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleClick}
-          className="w-full"
-        >
-          <Upload className="mr-2 h-4 w-4" />
-          {label}
-        </Button>
-        {value && (
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            onClick={handleRemove}
+    <div className="flex flex-col items-center justify-center w-full">
+      {value ? (
+        <div className="flex flex-col items-center gap-4 w-full">
+          {value.endsWith(".pdf") ? (
+            <iframe
+              src={value}
+              className="w-full h-64 border rounded-lg"
+            />
+          ) : (
+            <img
+              src={value}
+              alt="Upload"
+              className="rounded-lg w-full h-64 object-cover"
+            />
+          )}
+          <button
+            onClick={() => onChange("")}
+            className="bg-rose-500 text-white px-4 py-2 rounded-md hover:bg-rose-600"
           >
-            <X className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
-      {value && (
-        <p className="text-sm text-muted-foreground">
-          Selected: {value.name}
-        </p>
-      )}
-      {error && (
-        <p className="text-sm text-destructive text-red-500">{error}</p>
+            Remove file
+          </button>
+        </div>
+      ) : (
+        <UploadDropzone<OurFileRouter, "counselorDocument">
+          endpoint={endpoint}
+          onClientUploadComplete={(res) => {
+            onChange(res?.[0].url);
+          }}
+          onUploadError={(error: Error) => {
+            console.log(error);
+          }}
+        />
       )}
     </div>
-  )
-}
+  );
+};
