@@ -124,7 +124,7 @@ export function Navbar() {
                   <Link href="/dashboard">
                     <Button
                       variant="ghost"
-                      className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                      className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
                     >
                       Dashboard
                     </Button>
@@ -136,7 +136,7 @@ export function Navbar() {
 
           <AnimatePresence>
             <motion.div
-              className="flex items-center space-x-4 bg-white"
+              className="flex items-center space-x-4 "
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
@@ -240,7 +240,7 @@ export function Navbar() {
                   <Button
                     variant="ghost"
                     onClick={() => signIn("google")}
-                    className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
+                    className="text-muted-foreground hover:text-primary hover:bg-primary/10 bg-transparent transition-colors cursor-pointer hidden md:block"
                   >
                     Sign In
                   </Button>

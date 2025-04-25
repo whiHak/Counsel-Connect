@@ -1,0 +1,147 @@
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { Booking, Counselor, ChatRoom } from "@/lib/db/schema";
+import connectDB from "@/lib/db/connect";
+
+interface TimeSlot {
+  startTime: string;
+  endTime: string;
+}
+
+interface Availability {
+  day: string;
+  slots: TimeSlot[];
+}
+
+export async function POST(req: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    await connectDB();
+    const { counselorId, date, timeSlot, sessionType } = await req.json();
+
+    // Validate the time slot is available
+    const [startTime, endTime] = timeSlot.split("-");
+    const bookingDate = new Date(date);
+    const dayOfWeek = bookingDate.toLocaleDateString("en-US", {
+      weekday: "long",
+    });
+
+    const counselor = await Counselor.findById(counselorId);
+    if (!counselor) {
+      return NextResponse.json(
+        { error: "Counselor not found" },
+        { status: 404 }
+      );
+    }
+
+    // Check if the time slot exists in counselor's availability
+    const availableSlot = counselor.workPreferences.availability
+      .find((a: Availability) => a.day.toLowerCase() === dayOfWeek.toLowerCase())
+      ?.slots.find(
+        (slot: TimeSlot) =>
+          slot.startTime === startTime && slot.endTime === endTime
+      );
+
+    if (!availableSlot) {
+      return NextResponse.json(
+        { error: "Time slot not available" },
+        { status: 400 }
+      );
+    }
+
+    // Check if the slot is already booked
+    const existingBooking = await Booking.findOne({
+      counselorId,
+      date: {
+        $gte: new Date(bookingDate.setHours(0, 0, 0, 0)),
+        $lt: new Date(bookingDate.setHours(23, 59, 59, 999)),
+      },
+      startTime,
+      endTime,
+    });
+
+    if (existingBooking) {
+      return NextResponse.json(
+        { error: "Time slot already booked" },
+        { status: 400 }
+      );
+    }
+
+    // Create the booking
+    const booking = await Booking.create({
+      userId: session.user.id,
+      counselorId,
+      date: bookingDate,
+      startTime,
+      endTime,
+      sessionType,
+      status: "scheduled",
+      amount: counselor.workPreferences.hourlyRate,
+    });
+
+    // Create a chat room for the session if it doesn't exist
+    const chatRoom = await ChatRoom.findOneAndUpdate(
+      {
+        $or: [
+          { user1Id: session.user.id, user2Id: counselorId },
+          { user1Id: counselorId, user2Id: session.user.id },
+        ],
+      },
+      {
+        $setOnInsert: {
+          user1Id: session.user.id,
+          user2Id: counselorId,
+          createdAt: new Date(),
+        },
+      },
+      { upsert: true, new: true }
+    );
+
+    return NextResponse.json({
+      booking,
+      chatRoomId: chatRoom._id,
+    });
+  } catch (error) {
+    console.error("Error creating booking:", error);
+    return NextResponse.json(
+      { error: "Failed to create booking" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(req: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    await connectDB();
+    const { searchParams } = new URL(req.url);
+    const userId = session.user.id;
+    const status = searchParams.get("status");
+
+    const query = {
+      userId,
+      ...(status && { status }),
+    };
+
+    const bookings = await Booking.find(query)
+      .populate("counselorId")
+      .sort({ date: -1 });
+
+    return NextResponse.json({ bookings });
+  } catch (error) {
+    console.error("Error fetching bookings:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch bookings" },
+      { status: 500 }
+    );
+  }
+} 

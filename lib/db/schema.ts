@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 const userSchema = new mongoose.Schema({
   name: String,
@@ -49,45 +49,116 @@ const counselorSchema = new mongoose.Schema({
     ],
   },
   imageUrl: String,
+  reviews: [
+    {
+      rating: Number,
+      comment: String,
+      userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
 });
+
 const messageSchema = new mongoose.Schema({
-  sender: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+  content: {
+    type: String,
+    required: true,
   },
-  receiver: {
+  senderId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: "User",
+    required: true,
   },
-  content: String,
-  timestamp: {
-    type: Date,
-    default: Date.now
+  receiverId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  chatRoomId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ChatRoom",
+    required: true,
   },
   read: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-const appointmentSchema = new mongoose.Schema({
-  client: {
+const chatRoomSchema = new mongoose.Schema({
+  user1Id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: "User",
+    required: true,
   },
-  counselor: {
+  user2Id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: "User",
+    required: true,
   },
-  date: Date,
-  startTime: String,
-  endTime: String,
+  lastMessage: {
+    type: String,
+  },
+  lastMessageDate: {
+    type: Date,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+const bookingSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  counselorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Counselor",
+    required: true,
+  },
+  date: {
+    type: Date,
+    required: true,
+  },
+  startTime: {
+    type: String,
+    required: true,
+  },
+  endTime: {
+    type: String,
+    required: true,
+  },
+  sessionType: {
+    type: String,
+    enum: ["video", "chat"],
+    required: true,
+  },
   status: {
     type: String,
-    enum: ['PENDING', 'CONFIRMED', 'CANCELLED'],
-    default: 'PENDING'
+    enum: ["scheduled", "completed", "cancelled"],
+    default: "scheduled",
   },
-  notes: String
+  amount: {
+    type: Number,
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const counselorApplicationSchema = new mongoose.Schema({
@@ -147,8 +218,27 @@ const counselorApplicationSchema = new mongoose.Schema({
   reviewNotes: String
 });
 
+const AppointmentSchema = new Schema({
+  client: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  counselor: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  date: { type: Date, required: true },
+  startTime: { type: String, required: true },
+  endTime: { type: String, required: true },
+  status: { 
+    type: String, 
+    enum: ['CONFIRMED', 'COMPLETED', 'CANCELLED'], 
+    default: 'CONFIRMED' 
+  },
+  notes: { type: String },
+}, {
+  timestamps: true
+});
+
 export const User = mongoose.models.User || mongoose.model('User', userSchema);
 export const Counselor = mongoose.models.Counselor || mongoose.model('Counselor', counselorSchema);
 export const Message = mongoose.models.Message || mongoose.model('Message', messageSchema);
-export const Appointment = mongoose.models.Appointment || mongoose.model('Appointment', appointmentSchema);
-export const CounselorApplication = mongoose.models.CounselorApplication || mongoose.model('CounselorApplication', counselorApplicationSchema); 
+
+export const Booking = mongoose.models.Booking || mongoose.model('Booking', bookingSchema);
+export const ChatRoom = mongoose.models.ChatRoom || mongoose.model('ChatRoom', chatRoomSchema);
+export const CounselorApplication = mongoose.models.CounselorApplication || mongoose.model('CounselorApplication', counselorApplicationSchema);
+export const Appointment = mongoose.models.Appointment || mongoose.model('Appointment', AppointmentSchema); 

@@ -115,8 +115,8 @@ export default function Home() {
                     Find a Counselor <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
-                <Button size="lg" variant="outline" className="border-primary/20 text-foreground hover:bg-accent/50" asChild>
-                  <Link href="/about">Learn More</Link>
+                <Button size="lg" variant="outline" className="border-primary/20 text-foreground hover:bg-accent/50 z-10" asChild>
+                  <Link href="/how-it-works">Learn More</Link>
                 </Button>
               </div>
             </motion.div>
@@ -137,7 +137,7 @@ export default function Home() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-secondary/5 to-muted/5" />
                 </div>
-                <div className="absolute -bottom-5 -right-5 bg-background shadow-lg rounded-lg p-4 border border-muted/20 glass">
+                <div className="absolute -bottom-5 -right-5 bg-background shadow-lg rounded-lg p-4 border border-muted/20 glass md:block hidden" >
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-gradient-primary flex items-center justify-center">
                       <Users className="h-5 w-5 text-white" />

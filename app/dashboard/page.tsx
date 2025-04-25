@@ -71,14 +71,19 @@ export default function DashboardPage() {
 
   const recentMessages = [
     {
-      from: "Emily Rodriguez",
+      from: "Abebe Rodriguez",
       message: "Thank you for the session yesterday...",
       time: "2 hours ago",
     },
     {
-      from: "James Wilson",
+      from: "Haile Wilson",
       message: "Looking forward to our next meeting...",
       time: "5 hours ago",
+    },
+    {
+      from: "Tesfa Rodriguez",
+      message: "Thank you for the session yesterday...",
+      time: "2 hours ago",
     },
   ];
 
@@ -89,7 +94,7 @@ export default function DashboardPage() {
         <div className="flex items-center gap-4">
           <Button
             onClick={() => router.push("/dashboard/schedule")}
-            className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:from-violet-700 hover:to-indigo-700"
+            className="bg-gradient-primary text-white hover:from-violet-700 hover:to-indigo-700 cursor-pointer"
           >
             <Clock className="mr-2 h-4 w-4" />
             Set Availability
@@ -156,7 +161,7 @@ export default function DashboardPage() {
               ))}
               <Button
                 variant="outline"
-                className="w-full"
+                className="w-full cursor-pointer"
                 onClick={() => router.push("/dashboard/appointments")}
               >
                 View All Appointments
@@ -190,7 +195,7 @@ export default function DashboardPage() {
               ))}
               <Button
                 variant="outline"
-                className="w-full"
+                className="w-full cursor-pointer"
                 onClick={() => router.push("/dashboard/messages")}
               >
                 View All Messages

@@ -171,6 +171,7 @@ export default function SchedulePage() {
               size="sm"
               onClick={() => selectedDate && addTimeSlot(selectedDate)}
               disabled={!selectedDate}
+              className="cursor-pointer"
             >
               <Plus className="h-4 w-4 mr-1" />
               Add Slot
