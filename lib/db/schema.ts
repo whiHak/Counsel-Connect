@@ -18,22 +18,38 @@ const userSchema = new mongoose.Schema({
 const counselorSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: "User",
   },
-  specializations: [String],
-  languages: [String],
-  bio: String,
-  experience: Number,
-  hourlyRate: Number,
-  availability: [{
-    day: String,
-    slots: [{
-      startTime: String,
-      endTime: String
-    }]
-  }]
+  personalInfo: {
+    fullName: String,
+    phoneNumber: String,
+    address: String,
+    dateOfBirth: Date,
+  },
+  professionalInfo: {
+    specializations: [String],
+    languages: [String],
+    yearsOfExperience: Number,
+    licenseNumber: String,
+    licenseUrl: String,
+    resumeUrl: String,
+  },
+  workPreferences: {
+    hourlyRate: Number,
+    availability: [
+      {
+        day: String,
+        slots: [
+          {
+            startTime: String,
+            endTime: String,
+          },
+        ],
+      },
+    ],
+  },
+  imageUrl: String,
 });
-
 const messageSchema = new mongoose.Schema({
   sender: {
     type: mongoose.Schema.Types.ObjectId,
