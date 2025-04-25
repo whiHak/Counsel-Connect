@@ -272,7 +272,7 @@ export default function SchedulePage() {
         <Button
           size="lg"
           onClick={handleSaveChanges}
-          className="bg-gradient-primary text-white hover:bg-gradient-to-r from-blue-500 to-purple-500"
+          className="bg-gradient-primary text-white hover:bg-gradient-to-r from-blue-500 to-purple-500 cursor-pointer"
         >
           Save Changes
         </Button>
