@@ -128,6 +128,10 @@ export default function SchedulePage() {
         title: "Success",
         description: "Schedule updated successfully",
         variant: "default",
+        style: {
+          backgroundColor: "#4caf50",
+          color: "#fff",
+        },
       });
     } catch (error) {
       console.error('Error saving schedule:', error);
@@ -135,6 +139,10 @@ export default function SchedulePage() {
         title: "Error",
         description: "Failed to update schedule. Please try again.",
         variant: "destructive",
+        style: {
+          backgroundColor: "#f44336",
+          color: "#fff",
+        },
       });
     }
   }
