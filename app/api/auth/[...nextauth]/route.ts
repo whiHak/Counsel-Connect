@@ -2,8 +2,9 @@ import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import { User } from '@/lib/db/schema';
 import connectDB from '@/lib/db/connect';
+import { NextAuthOptions } from "next-auth";
 
-const handler = NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -11,13 +12,26 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
-    async session({ session, user }) {
+    async jwt({ token, user, account, profile }) {
+      if (user) {
+        await connectDB();
+        const dbUser = await User.findOne({ email: user.email });
+        if (dbUser) {
+          token.role = dbUser.role;
+          token.isProfileComplete = dbUser.isProfileComplete;
+          token.userId = dbUser._id.toString();
+        }
+      }
+      return token;
+    },
+    async session({ session, token }) {
       if (session.user) {
         await connectDB();
         const dbUser = await User.findOne({ email: session.user.email });
         if (dbUser) {
-          session.user.id = dbUser._id.toString();
-          session.user.role = dbUser.role;
+          session.user.role = token.role;
+          session.user.isProfileComplete = token.isProfileComplete;
+          session.user.id = token.userId;
         }
       }
       return session;
@@ -32,6 +46,8 @@ const handler = NextAuth({
             email: user.email,
             name: user.name,
             image: user.image,
+            phoneNumber: null,
+            isProfileComplete: false,
             role: 'CLIENT'
           });
         }
@@ -44,6 +60,7 @@ const handler = NextAuth({
     error: '/auth/error',
   },
   secret: process.env.NEXTAUTH_SECRET,
-});
+};
 
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST }; 

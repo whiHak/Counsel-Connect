@@ -18,13 +18,42 @@ export async function middleware(request: NextRequest) {
   }
 
   // Verify the session token
-  const session = await getToken({
+  const token = await getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET
   })
 
   // If not a public route and no session exists, redirect to home page
-  if (!session) {
+  if (!token) {
+    return NextResponse.redirect(new URL('/', request.url))
+  }
+
+  // Check role-based access and profile completion
+  const userRole = token.role as string
+  const isProfileComplete = token.isProfileComplete as boolean
+
+  console.log('Token in middleware:', token) // For debugging
+
+  // Profile completion check for clients
+  if (
+    userRole === 'CLIENT' && 
+    !isProfileComplete &&
+    !path.startsWith('/profile/complete') &&
+    (path.startsWith('/counselors') ||
+     path.startsWith('/appointments') ||
+     path.startsWith('/messages') ||
+     path.startsWith('/profile'))
+  ) {
+    return NextResponse.redirect(new URL('/profile/complete', request.url))
+  }
+
+  // Counselor-only routes
+  if (path.startsWith('/dashboard') && userRole !== 'COUNSELOR') {
+    return NextResponse.redirect(new URL('/', request.url))
+  }
+
+  // Client-only routes
+  if (path.startsWith('/become-counselor') && userRole !== 'CLIENT') {
     return NextResponse.redirect(new URL('/', request.url))
   }
 
@@ -44,5 +73,11 @@ export const config = {
      * 5. /favicon.ico, /sitemap.xml (static files)
      */
     '/((?!api|_next|_static|_vercel|favicon.ico|sitemap.xml).*)',
+    '/counselors/:path*',
+    '/appointments/:path*',
+    '/messages/:path*',
+    '/profile/:path*',
+    '/dashboard/:path*',
+    '/become-counselor',
   ],
 } 
