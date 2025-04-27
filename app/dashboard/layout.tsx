@@ -14,11 +14,11 @@ export default function DashboardLayout({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen">
+    <div className="container mx-auto flex min-h-screen">
       {/* Mobile menu button */}
       <Button
         variant="ghost"
-        className="fixed top-4 left-4 z-50 md:hidden"
+        className="fixed top-14 left-4 z-50 md:hidden"
         onClick={() => setIsOpen(!isOpen)}
       >
         <Menu className="h-6 w-6" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,7 +29,7 @@ interface DaySchedule {
 export default function SchedulePage() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [schedules, setSchedules] = useState<DaySchedule[]>([]);
-  const [hourlyRate, setHourlyRate] = useState("150");
+  const [hourlyRate, setHourlyRate] = useState("50");
 
   const addTimeSlot = (date: Date) => {
     setSchedules((prev) => {
@@ -109,6 +109,7 @@ export default function SchedulePage() {
     : null;
 
   const handleSaveChanges = async () => {
+    console.log(schedules)
     try {
       const response = await fetch('/api/counselor/schedule', {
         method: 'PUT',
@@ -147,8 +148,27 @@ export default function SchedulePage() {
     }
   }
 
+  // useEffect(() => {
+  //   const fetchSchedule = async () => {
+  //     try {
+  //       const response = await fetch('/api/counselor/schedule');
+  //       const data = await response.json();
+
+  //       if (!response.ok) {
+  //         throw new Error(data.error || 'Failed to fetch schedule');
+  //       }
+
+  //       setSchedules(data.availability);
+  //       setHourlyRate(data.hourlyRate);
+  //     } catch (error) {
+  //       console.error('Error fetching schedule:', error);
+  //     }
+  //   };
+
+  //   fetchSchedule();
+  // },[selectedDate])
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 mx-auto">
       <div className="flex flex-col md:flex-row gap-6">
         <Card className="flex-1">
           <CardHeader>

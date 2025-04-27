@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { Counselor } from "@/lib/db/schema";
 import connectDB from "@/lib/db/connect";
+import { getToken } from "next-auth/jwt";
 
 export async function POST(request: NextRequest) {
   try {
@@ -48,9 +49,12 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET
+    })
 
-    if (!session?.user) {
+    if (!token?.userId) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -59,7 +63,7 @@ export async function GET(request: NextRequest) {
 
     await connectDB();
 
-    const counselor = await Counselor.findOne({ userId: session.user.id });
+    const counselor = await Counselor.findOne({ userId: token.userId });
 
     if (!counselor) {
       return NextResponse.json(
@@ -69,8 +73,8 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({
-      availability: counselor.availability,
-      hourlyRate: counselor.hourlyRate,
+      availability: counselor.workPreferences.availability,
+      hourlyRate: counselor.workPreferences.hourlyRate,
     });
   } catch (error) {
     console.error("Error fetching schedule:", error);
@@ -81,12 +85,14 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function PUT(req: Request) {
+export async function PUT(req: NextRequest) {
   try {
     // Get the authenticated session
-    const session = await getServerSession();
-
-    if (!session?.user) {
+    const token = await getToken({
+      req: req,
+      secret: process.env.NEXTAUTH_SECRET
+    });
+    if (!token?.userId) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -96,13 +102,12 @@ export async function PUT(req: Request) {
     // Connect to database
     await connectDB();
 
-    // Get request body
     const { schedules, hourlyRate } = await req.json();
 
     // Format the availability data to match schema
     const availability = schedules.map((schedule: any) => ({
-      day: schedule.day,
-      slots: schedule.slots.map((slot: any) => ({
+      day: schedule.date,
+      slots: schedule.timeSlots.map((slot: any) => ({
         startTime: slot.startTime,
         endTime: slot.endTime
       }))
@@ -110,7 +115,7 @@ export async function PUT(req: Request) {
 
     // Update counselor's work preferences
     const updatedCounselor = await Counselor.findOneAndUpdate(
-      { userId: session.user.id },
+      { userId: token.userId },
       {
         $set: {
           'workPreferences.hourlyRate': hourlyRate,

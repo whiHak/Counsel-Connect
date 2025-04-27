@@ -2,14 +2,61 @@ import mongoose, { Schema } from 'mongoose';
 
 const userSchema = new mongoose.Schema({
   name: String,
-  email: String,
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  },
   image: String,
+  phoneNumber: String,
   role: {
     type: String,
     enum: ['CLIENT', 'COUNSELOR'],
     default: 'CLIENT'
   },
+  isProfileComplete: {
+    type: Boolean,
+    default: false
+  },
   createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+const clientProfileSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    unique: true
+  },
+  personalInfo: {
+    address: { type: String, required: true },
+    dateOfBirth: { type: Date, required: true },
+    gender: { type: String, enum: ['Male', 'Female', 'Other'] },
+    emergencyContact: {
+      name: String,
+      relationship: String,
+      phoneNumber: String
+    }
+  },
+  preferences: {
+    preferredLanguages: [String],
+    counselingType: [String], // e.g., ['individual', 'group', 'family']
+    preferredGender: { type: String, enum: ['Male', 'Female', 'No Preference'] }
+  },
+  medicalHistory: {
+    currentMedications: [String],
+    previousCounseling: Boolean,
+    previousCounselingDetails: String,
+    relevantHealthConditions: [String]
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
     type: Date,
     default: Date.now
   }
@@ -235,6 +282,7 @@ const AppointmentSchema = new Schema({
 });
 
 export const User = mongoose.models.User || mongoose.model('User', userSchema);
+export const ClientProfile = mongoose.models.ClientProfile || mongoose.model('ClientProfile', clientProfileSchema);
 export const Counselor = mongoose.models.Counselor || mongoose.model('Counselor', counselorSchema);
 export const Message = mongoose.models.Message || mongoose.model('Message', messageSchema);
 

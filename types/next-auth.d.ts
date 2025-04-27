@@ -8,7 +8,8 @@ declare module 'next-auth' {
       email: string;
       image: string;
       role: 'CLIENT' | 'COUNSELOR';
-    }
+      isProfileComplete: boolean;
+    } & DefaultSession['user'];
   }
 
   interface User {
@@ -17,5 +18,13 @@ declare module 'next-auth' {
     email: string;
     image: string;
     role: 'CLIENT' | 'COUNSELOR';
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    id: string;
+    role: 'CLIENT' | 'COUNSELOR';
+    isProfileComplete: boolean;
   }
 } 
