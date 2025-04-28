@@ -11,12 +11,13 @@ interface Review {
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await Promise.resolve(params);
     await connectDB();
 
-    const counselor = await Counselor.findById(params.id).populate({
+    const counselor = await Counselor.findById(resolvedParams.id).populate({
       path: "userId",
       model: User,
       select: "name email",
@@ -37,6 +38,7 @@ export async function GET(
 
     return NextResponse.json({
       id: counselor._id,
+      userId: counselor.userId._id,
       personalInfo: counselor.personalInfo,
       professionalInfo: counselor.professionalInfo,
       workPreferences: counselor.workPreferences,

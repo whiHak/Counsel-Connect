@@ -16,9 +16,12 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
 import { Clock, MessageSquare, Star, Video } from "lucide-react";
+import { format, isToday, isTomorrow } from "date-fns";
+import formatDate, { disablePastDates } from "@/lib/utils";
 
 interface CounselorProfile {
   id: string;
+  userId: string;
   personalInfo: {
     fullName: string;
     phoneNumber: string;
@@ -42,6 +45,9 @@ interface CounselorProfile {
     }[];
   };
   imageUrl: string;
+  reviews: {
+    rating: number
+  }[]
   rating: number;
   reviewCount: number;
 }
@@ -76,6 +82,10 @@ export default function CounselorDetailPage() {
         title: "Error",
         description: "Please select a date and time slot",
         variant: "destructive",
+        style: {
+          backgroundColor: "#f44336",
+          color: "#fff",
+        },
       });
       return;
     }
@@ -87,7 +97,7 @@ export default function CounselorDetailPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          counselorId: params.id,
+          counselorId: counselor?.userId,
           date: selectedDate,
           timeSlot: selectedSlot,
           sessionType,
@@ -102,12 +112,20 @@ export default function CounselorDetailPage() {
         title: "Success",
         description: "Session booked successfully!",
         variant: "default",
+        style: {
+          backgroundColor: "#4caf50",
+          color: "#fff",
+        },
       });
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to book session. Please try again.",
         variant: "destructive",
+        style: {
+          backgroundColor: "#f44336",
+          color: "#fff",
+        },
       });
     }
   };
@@ -128,7 +146,7 @@ export default function CounselorDetailPage() {
     <div className="container mx-auto py-8">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Profile Information */}
-        <div className="md:col-span-2 space-y-6">
+        <div className="md:col-span-1 space-y-6">
           <Card>
             <CardContent className="p-6">
               <div className="flex items-start gap-6">
@@ -146,11 +164,11 @@ export default function CounselorDetailPage() {
                     <div className="flex items-center">
                       <Star className="w-4 h-4 text-yellow-400 fill-current" />
                       <span className="ml-1 font-medium">
-                        {counselor.rating.toFixed(1)}
+                        {counselor.reviews ? counselor.reviews[0]?.rating?.toFixed(1) : 0}
                       </span>
                     </div>
                     <span className="text-muted-foreground">
-                      ({counselor.reviewCount} reviews)
+                      (1 reviews)
                     </span>
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -196,7 +214,7 @@ export default function CounselorDetailPage() {
         </div>
 
         {/* Booking Section */}
-        <div className="space-y-6">
+        <div className="space-y-6 md:col-span-2">
           <Card>
             <CardHeader>
               <CardTitle>Book a Session</CardTitle>
@@ -216,7 +234,8 @@ export default function CounselorDetailPage() {
                   <Button
                     variant={sessionType === "video" ? "default" : "outline"}
                     onClick={() => setSessionType("video")}
-                    className="flex-1"
+                    className={`flex-1 cursor-pointer ${
+                      sessionType === "video" ? "bg-gradient-primary text-white" : ""}`}
                   >
                     <Video className="w-4 h-4 mr-2" />
                     Video
@@ -224,7 +243,8 @@ export default function CounselorDetailPage() {
                   <Button
                     variant={sessionType === "chat" ? "default" : "outline"}
                     onClick={() => setSessionType("chat")}
-                    className="flex-1"
+                    className={`flex-1 cursor-pointer ${
+                      sessionType === "chat" ? "bg-gradient-primary text-white" : ""}`}
                   >
                     <MessageSquare className="w-4 h-4 mr-2" />
                     Chat
@@ -237,6 +257,7 @@ export default function CounselorDetailPage() {
                 <Calendar
                   mode="single"
                   selected={selectedDate}
+                  disabled={disablePastDates}
                   onSelect={setSelectedDate}
                   className="rounded-md border"
                 />
@@ -251,21 +272,19 @@ export default function CounselorDetailPage() {
                   <SelectTrigger>
                     <SelectValue placeholder="Select a time slot" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-gray-50">
                     {counselor.workPreferences.availability
                       .find(
                         (a) =>
-                          a.day.toLowerCase() ===
-                          selectedDate?.toLocaleDateString("en-US", {
-                            weekday: "long",
-                          }).toLowerCase()
+                          formatDate(a.day) ===
+                          formatDate(selectedDate?.toDateString() || "")
                       )
                       ?.slots.map((slot) => (
                         <SelectItem
                           key={`${slot.startTime}-${slot.endTime}`}
                           value={`${slot.startTime}-${slot.endTime}`}
                         >
-                          <div className="flex items-center">
+                          <div className="flex items-center">                            
                             <Clock className="w-4 h-4 mr-2" />
                             {slot.startTime} - {slot.endTime}
                           </div>
@@ -276,7 +295,7 @@ export default function CounselorDetailPage() {
               </div>
 
               <Button
-                className="w-full"
+                className="w-full bg-gradient-primary text-white cursor-pointer"
                 size="lg"
                 onClick={handleBookSession}
               >

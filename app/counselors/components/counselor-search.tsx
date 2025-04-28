@@ -195,7 +195,7 @@ export default function CounselorSearch({ onFiltersChange }: CounselorSearchProp
       </div>
 
       <Button 
-        className="w-full bg-gradient-primary hover:opacity-90 text-white"
+        className="w-full bg-gradient-primary hover:opacity-90 text-white cursor-pointer"
         onClick={handleApplyFilters}
       >
         <Sparkles className="h-4 w-4 mr-2" />

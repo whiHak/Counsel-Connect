@@ -1,8 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { Booking, Counselor, ChatRoom } from "@/lib/db/schema";
 import connectDB from "@/lib/db/connect";
+import { getToken } from "next-auth/jwt";
+import formatDate from "@/lib/utils";
 
 interface TimeSlot {
   startTime: string;
@@ -14,24 +16,27 @@ interface Availability {
   slots: TimeSlot[];
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    const token = await getToken({
+      req,
+      secret: process.env.NEXTAUTH_SECRET,
+    })
+
+    if (!token?.userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     await connectDB();
     const { counselorId, date, timeSlot, sessionType } = await req.json();
+    console.log(counselorId)
 
     // Validate the time slot is available
     const [startTime, endTime] = timeSlot.split("-");
     const bookingDate = new Date(date);
-    const dayOfWeek = bookingDate.toLocaleDateString("en-US", {
-      weekday: "long",
-    });
+    const dayOfWeek = bookingDate.toLocaleDateString()
 
-    const counselor = await Counselor.findById(counselorId);
+    const counselor = await Counselor.findOne({userId: counselorId});
     if (!counselor) {
       return NextResponse.json(
         { error: "Counselor not found" },
@@ -41,7 +46,7 @@ export async function POST(req: Request) {
 
     // Check if the time slot exists in counselor's availability
     const availableSlot = counselor.workPreferences.availability
-      .find((a: Availability) => a.day.toLowerCase() === dayOfWeek.toLowerCase())
+      .find((a: Availability) => formatDate(a.day) === formatDate(dayOfWeek))
       ?.slots.find(
         (slot: TimeSlot) =>
           slot.startTime === startTime && slot.endTime === endTime
@@ -74,7 +79,7 @@ export async function POST(req: Request) {
 
     // Create the booking
     const booking = await Booking.create({
-      userId: session.user.id,
+      userId: token.userId,
       counselorId,
       date: bookingDate,
       startTime,
@@ -88,13 +93,13 @@ export async function POST(req: Request) {
     const chatRoom = await ChatRoom.findOneAndUpdate(
       {
         $or: [
-          { user1Id: session.user.id, user2Id: counselorId },
-          { user1Id: counselorId, user2Id: session.user.id },
+          { user1Id: token.userId, user2Id: counselorId },
+          { user1Id: counselorId, user2Id: token.userId },
         ],
       },
       {
         $setOnInsert: {
-          user1Id: session.user.id,
+          user1Id: token.userId,
           user2Id: counselorId,
           createdAt: new Date(),
         },

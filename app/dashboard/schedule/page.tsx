@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { Clock, Plus, X } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
+import formatDate, { disablePastDates } from "@/lib/utils";
 
 interface TimeSlot {
   id: string;
@@ -25,13 +26,23 @@ interface DaySchedule {
   date: Date;
   timeSlots: TimeSlot[];
 }
+interface SettedSchedule {
+  day: Date;
+  slots: TimeSlot[];
+}
 
 export default function SchedulePage() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [schedules, setSchedules] = useState<DaySchedule[]>([]);
   const [hourlyRate, setHourlyRate] = useState("50");
+  const [settedSchedule, setSettedSchedule] = useState<SettedSchedule | null>(null);
 
   const addTimeSlot = (date: Date) => {
+    const currentHour = new Date().getHours();
+    const defaultStartHour = date.toDateString() === new Date().toDateString() 
+      ? Math.max(currentHour + 1, 9) 
+      : 9;
+
     setSchedules((prev) => {
       const existingSchedule = prev.find(
         (s) => s.date.toDateString() === date.toDateString()
@@ -46,8 +57,8 @@ export default function SchedulePage() {
                   ...schedule.timeSlots,
                   {
                     id: Math.random().toString(),
-                    startTime: "09:00",
-                    endTime: "10:00",
+                    startTime: `${defaultStartHour.toString().padStart(2, "0")}:00`,
+                    endTime: `${(defaultStartHour + 1).toString().padStart(2, "0")}:00`,
                   },
                 ],
               }
@@ -62,8 +73,8 @@ export default function SchedulePage() {
           timeSlots: [
             {
               id: Math.random().toString(),
-              startTime: "09:00",
-              endTime: "10:00",
+              startTime: `${defaultStartHour.toString().padStart(2, "0")}:00`,
+              endTime: `${(defaultStartHour + 1).toString().padStart(2, "0")}:00`,
             },
           ],
         },
@@ -90,6 +101,20 @@ export default function SchedulePage() {
     field: "startTime" | "endTime",
     value: string
   ) => {
+    // Validate time selection
+    const currentDate = new Date();
+    const isToday = date.toDateString() === currentDate.toDateString();
+    const selectedHour = parseInt(value.split(":")[0]);
+    
+    if (isToday && selectedHour <= currentDate.getHours()) {
+      toast({
+        title: "Invalid Time",
+        description: "Please select a future time slot",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setSchedules((prev) =>
       prev.map((schedule) =>
         schedule.date.toDateString() === date.toDateString()
@@ -108,8 +133,12 @@ export default function SchedulePage() {
     ? schedules.find((s) => s.date.toDateString() === selectedDate.toDateString())
     : null;
 
+  const selectedSettedSchedule = selectedDate && settedSchedule && 
+    new Date(settedSchedule.day).toDateString() === selectedDate.toDateString()
+    ? settedSchedule
+    : null;
+
   const handleSaveChanges = async () => {
-    console.log(schedules)
     try {
       const response = await fetch('/api/counselor/schedule', {
         method: 'PUT',
@@ -148,25 +177,39 @@ export default function SchedulePage() {
     }
   }
 
-  // useEffect(() => {
-  //   const fetchSchedule = async () => {
-  //     try {
-  //       const response = await fetch('/api/counselor/schedule');
-  //       const data = await response.json();
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      try {
+        const response = await fetch('/api/counselor/schedule');
+        const data = await response.json();
 
-  //       if (!response.ok) {
-  //         throw new Error(data.error || 'Failed to fetch schedule');
-  //       }
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to fetch schedule');
+        }
 
-  //       setSchedules(data.availability);
-  //       setHourlyRate(data.hourlyRate);
-  //     } catch (error) {
-  //       console.error('Error fetching schedule:', error);
-  //     }
-  //   };
+        const matchingSchedule = data.availability?.find(
+          (a: any) =>
+            formatDate(a.day) ===
+            formatDate(selectedDate?.toDateString() || "")
+        );
 
-  //   fetchSchedule();
-  // },[selectedDate])
+        if (matchingSchedule) {
+          setSettedSchedule(matchingSchedule);
+        } else {
+          setSettedSchedule(null);
+        }
+        
+        setHourlyRate(data.hourlyRate);
+      } catch (error) {
+        console.error('Error fetching schedule:', error);
+      }
+    };
+
+    fetchSchedule();
+  }, [selectedDate]);
+
+  // Function to disable past dates
+
   return (
     <div className="space-y-6 mx-auto">
       <div className="flex flex-col md:flex-row gap-6">
@@ -179,6 +222,7 @@ export default function SchedulePage() {
               mode="single"
               selected={selectedDate}
               onSelect={setSelectedDate}
+              disabled={disablePastDates}
               className="rounded-md border"
             />
           </CardContent>
@@ -190,7 +234,7 @@ export default function SchedulePage() {
             <Button
               size="sm"
               onClick={() => selectedDate && addTimeSlot(selectedDate)}
-              disabled={!selectedDate}
+              disabled={!selectedDate || disablePastDates(selectedDate)}
               className="cursor-pointer"
             >
               <Plus className="h-4 w-4 mr-1" />
@@ -202,13 +246,28 @@ export default function SchedulePage() {
               <p className="text-muted-foreground text-center py-8">
                 Select a date to manage time slots
               </p>
-            ) : selectedSchedule?.timeSlots.length === 0 ? (
+            ) : !selectedSchedule?.timeSlots?.length && !selectedSettedSchedule?.slots?.length ? (
               <p className="text-muted-foreground text-center py-8">
                 No time slots added for this date
               </p>
             ) : (
               <div className="space-y-4">
-                {selectedSchedule?.timeSlots.map((slot) => (
+                {selectedSettedSchedule?.slots?.map((slot) => (
+                  <div
+                    key={slot.id}
+                    className="flex items-center gap-2 bg-blue-50 p-3 rounded-lg"
+                  >
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <div className="flex-1">
+                      <span className="text-sm font-medium">
+                        {slot.startTime} to {slot.endTime}
+                      </span>
+                      <span className="ml-2 text-xs text-muted-foreground">(Existing)</span>
+                    </div>
+                  </div>
+                ))}
+
+                {selectedSchedule?.timeSlots?.map((slot) => (
                   <div
                     key={slot.id}
                     className="flex items-center gap-2 bg-muted/50 p-3 rounded-lg"
@@ -224,14 +283,20 @@ export default function SchedulePage() {
                         <SelectValue placeholder="Start time" />
                       </SelectTrigger>
                       <SelectContent className="bg-gray-50">
-                        {Array.from({ length: 24 }).map((_, i) => (
-                          <SelectItem
-                            key={i}
-                            value={`${i.toString().padStart(2, "0")}:00`}
-                          >
-                            {`${i.toString().padStart(2, "0")}:00`}
-                          </SelectItem>
-                        ))}
+                        {Array.from({ length: 24 }).map((_, i) => {
+                          const timeValue = `${i.toString().padStart(2, "0")}:00`;
+                          const isDisabled = selectedDate?.toDateString() === new Date().toDateString() && 
+                            i <= new Date().getHours();
+                          return (
+                            <SelectItem
+                              key={i}
+                              value={timeValue}
+                              disabled={isDisabled}
+                            >
+                              {timeValue}
+                            </SelectItem>
+                          );
+                        })}
                       </SelectContent>
                     </Select>
                     <span>to</span>
@@ -245,14 +310,20 @@ export default function SchedulePage() {
                         <SelectValue placeholder="End time" />
                       </SelectTrigger>
                       <SelectContent className="bg-gray-50">
-                        {Array.from({ length: 24 }).map((_, i) => (
-                          <SelectItem
-                            key={i}
-                            value={`${i.toString().padStart(2, "0")}:00`}
-                          >
-                            {`${i.toString().padStart(2, "0")}:00`}
-                          </SelectItem>
-                        ))}
+                        {Array.from({ length: 24 }).map((_, i) => {
+                          const timeValue = `${i.toString().padStart(2, "0")}:00`;
+                          const startHour = parseInt(slot.startTime.split(":")[0]);
+                          const isDisabled = i <= startHour;
+                          return (
+                            <SelectItem
+                              key={i}
+                              value={timeValue}
+                              disabled={isDisabled}
+                            >
+                              {timeValue}
+                            </SelectItem>
+                          );
+                        })}
                       </SelectContent>
                     </Select>
                     <Button
