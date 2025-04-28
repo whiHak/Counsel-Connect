@@ -25,7 +25,7 @@ interface ChatRoom {
   user2Id: string;
   lastMessage?: string;
   lastMessageDate?: Date;
-  otherUser: {
+  user: {
     _id: string;
     name: string;
     image?: string;
@@ -138,7 +138,7 @@ export default function MessagesPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           content: newMessage,
-          receiverId: selectedChat.otherUser._id,
+          receiverId: selectedChat.user._id,
           chatRoomId: selectedChat._id
         }),
       });
@@ -210,13 +210,13 @@ export default function MessagesPage() {
                 }`}
               >
                 <Avatar>
-                  <AvatarImage src={room.otherUser.image} />
+                  <AvatarImage src={room.user.image} />
                   <AvatarFallback className="bg-gradient-to-r from-indigo-400 to-purple-400 text-white">
-                    {room.otherUser.name[0]}
+                    {room.user.name[0]}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium truncate">{room.otherUser.name}</p>
+                  <p className="font-medium truncate">{room.user.name}</p>
                   <p className="text-sm text-muted-foreground truncate">
                     {room.lastMessage || "No messages yet"}
                   </p>
@@ -240,15 +240,15 @@ export default function MessagesPage() {
             <div className="p-4 border-b bg-white/50 backdrop-blur-sm flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Avatar>
-                  <AvatarImage src={selectedChat.otherUser.image} />
+                  <AvatarImage src={selectedChat.user.image} />
                   <AvatarFallback className="bg-gradient-to-r from-indigo-400 to-purple-400 text-white">
-                    {selectedChat.otherUser.name[0]}
+                    {selectedChat.user.name[0]}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="font-medium">{selectedChat.otherUser.name}</p>
+                  <p className="font-medium">{selectedChat.user.name}</p>
                   <p className="text-sm text-muted-foreground">
-                    {selectedChat.otherUser.role.toLowerCase()}
+                    {selectedChat.user.role.toLowerCase()}
                   </p>
                 </div>
               </div>

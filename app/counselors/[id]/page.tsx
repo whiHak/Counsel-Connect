@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -59,6 +59,7 @@ export default function CounselorDetailPage() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedSlot, setSelectedSlot] = useState<string>("");
   const [sessionType, setSessionType] = useState<"video" | "chat">("video");
+  const router = useRouter();
 
   useEffect(() => {
     const fetchCounselor = async () => {
@@ -117,6 +118,8 @@ export default function CounselorDetailPage() {
           color: "#fff",
         },
       });
+      // after successful booking navigate to /messages page
+      router.push("/messages");
     } catch (error) {
       toast({
         title: "Error",
