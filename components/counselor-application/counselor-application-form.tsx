@@ -234,7 +234,7 @@ export function CounselorApplicationForm({isPending, setIsPending}: {isPending: 
         {/* Message */}
         <p className="text-md text-slate-600 max-w-lg">
           Your application is currently <span className="font-semibold text-slate-700">pending review</span>.
-          We'll notify you once the process is complete. Thank you for your patience!
+          We'll notify you once the process is complete. Please Sign Out and Sign In for the changes to make Effect. Thank you for your patience!
         </p>
       </div>
     );
