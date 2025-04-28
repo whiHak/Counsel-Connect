@@ -3,12 +3,16 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { Appointment, Counselor } from "@/lib/db/schema";
 import connectDB from "@/lib/db/connect";
+import { getToken } from "next-auth/jwt";
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+    })
 
-    if (!session?.user) {
+    if (!token?.userId) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -16,6 +20,7 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await request.json();
+    console.log("Booking appointment data:", data);
     await connectDB();
 
     // Verify counselor exists and slot is available
@@ -44,7 +49,7 @@ export async function POST(request: NextRequest) {
 
     // Create appointment
     const appointment = await Appointment.create({
-      client: session.user.id,
+      client: token.userId,
       counselor: data.counselorId,
       date: data.date,
       startTime: data.startTime,
@@ -64,9 +69,12 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET
+    })
 
-    if (!session?.user) {
+    if (!token?.userId) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -79,8 +87,8 @@ export async function GET(request: NextRequest) {
     await connectDB();
 
     const query = role === "counselor"
-      ? { counselor: session.user.id }
-      : { client: session.user.id };
+      ? { counselor: token.userId }
+      : { client: token.userId };
 
     const appointments = await Appointment.find(query)
       .populate("client", "name email")
