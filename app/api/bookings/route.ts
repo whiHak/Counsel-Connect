@@ -120,26 +120,27 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    const token = await getToken({
+      req,
+      secret: process.env.NEXTAUTH_SECRET,
+    })
+    if (!token?.userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     await connectDB();
     const { searchParams } = new URL(req.url);
-    const userId = session.user.id;
-    const status = searchParams.get("status");
 
-    const query = {
-      userId,
-      ...(status && { status }),
-    };
-
-    const bookings = await Booking.find(query)
-      .populate("counselorId")
-      .sort({ date: -1 });
+    const bookings = await Booking.find({
+      counselorId: token.userId,
+      date: { $gte: new Date() },
+      status: "scheduled" 
+    })
+    .sort({ date: 1, startTime: 1 })
+    .limit(5)
+    .populate("userId", "name image");
 
     return NextResponse.json({ bookings });
   } catch (error) {
@@ -150,3 +151,39 @@ export async function GET(req: Request) {
     );
   }
 } 
+
+export async function PUT(req: NextRequest) {
+  try {
+    const token = await getToken({
+      req,
+      secret: process.env.NEXTAUTH_SECRET,
+    })
+    if (!token?.userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    await connectDB();
+    const { bookingId, status } = await req.json();
+
+    const booking = await Booking.findByIdAndUpdate(
+      bookingId,
+      { status },
+      { new: true }
+    );
+
+    if (!booking) {
+      return NextResponse.json(
+        { error: "Booking not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ booking });
+  } catch (error) {
+    console.error("Error updating booking:", error);
+    return NextResponse.json(
+      { error: "Failed to update booking" },
+      { status: 500 }
+    );
+  }
+}

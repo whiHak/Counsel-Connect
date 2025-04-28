@@ -13,36 +13,34 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
+  DollarSign,
 } from "lucide-react";
 import { format } from "date-fns";
 
-interface Appointment {
+interface Booking {
   _id: string;
-  client: {
+  userId: {
     name: string;
-    email: string;
+    image: string;
   };
-  counselor: {
-    name: string;
-    email: string;
-  };
+  counselorId: string;
   date: string;
   startTime: string;
   endTime: string;
-  status: "PENDING" | "CONFIRMED" | "CANCELLED";
-  notes?: string;
+  status: "scheduled" | "completed" | "cancelled";
+  amount: number;
 }
 
 const statusConfig = {
-  PENDING: {
-    color: "bg-yellow-100 text-yellow-800",
-    icon: AlertCircle,
-  },
-  CONFIRMED: {
+  scheduled: {
     color: "bg-green-100 text-green-800",
     icon: CheckCircle,
   },
-  CANCELLED: {
+  completed: {
+    color: "bg-blue-100 text-blue-800",
+    icon: CheckCircle,
+  },
+  cancelled: {
     color: "bg-red-100 text-red-800",
     icon: XCircle,
   },
@@ -51,19 +49,19 @@ const statusConfig = {
 export default function AppointmentsPage() {
   const { data: session } = useSession();
   const { toast } = useToast();
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchAppointments = async () => {
+    const fetchBookings = async () => {
       try {
-        const response = await fetch("/api/appointments");
+        const response = await fetch("/api/bookings");
         const data = await response.json();
-        setAppointments(data.appointments);
+        setBookings(data.bookings);
       } catch (error) {
         toast({
           title: "Error",
-          description: "Failed to load appointments",
+          description: "Failed to load bookings",
           variant: "destructive",
         });
       } finally {
@@ -71,43 +69,43 @@ export default function AppointmentsPage() {
       }
     };
 
-    fetchAppointments();
+    fetchBookings();
   }, [toast]);
 
-  const updateAppointmentStatus = async (
-    appointmentId: string,
-    status: "CONFIRMED" | "CANCELLED"
+  const updateBookingStatus = async (
+    bookingId: string,
+    status: "completed" | "cancelled"
   ) => {
     try {
-      const response = await fetch("/api/appointments", {
+      const response = await fetch("/api/bookings", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          appointmentId,
+          bookingId,
           status,
         }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to update appointment");
+        throw new Error("Failed to update booking");
       }
 
-      setAppointments((prev) =>
-        prev.map((app) =>
-          app._id === appointmentId ? { ...app, status } : app
+      setBookings((prev) =>
+        prev.map((booking) =>
+          booking._id === bookingId ? { ...booking, status } : booking
         )
       );
 
       toast({
         title: "Success",
-        description: `Appointment ${status.toLowerCase()} successfully`,
+        description: `Booking ${status} successfully`,
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to update appointment",
+        description: "Failed to update booking",
         variant: "destructive",
       });
     }
@@ -121,76 +119,83 @@ export default function AppointmentsPage() {
     );
   }
 
-  const upcomingAppointments = appointments.filter(
-    (app) => new Date(`${app.date}T${app.startTime}`) > new Date()
+  const upcomingBookings = bookings.filter(
+    (booking) => 
+      booking.status === "scheduled" && 
+      new Date(`${booking.date}`) > new Date()
   );
-  const pastAppointments = appointments.filter(
-    (app) => new Date(`${app.date}T${app.startTime}`) <= new Date()
+  
+  const pastBookings = bookings.filter(
+    (booking) => 
+      booking.status !== "scheduled" || 
+      new Date(`${booking.date}`) <= new Date()
   );
 
+  console.log(upcomingBookings, pastBookings);
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-bold mb-6">Upcoming Appointments</h2>
-        {upcomingAppointments.length === 0 ? (
+        <h2 className="text-2xl font-bold mb-6">Upcoming Sessions</h2>
+        {upcomingBookings.length === 0 ? (
           <Card>
             <CardContent className="flex flex-col items-center justify-center h-40">
               <Calendar className="h-8 w-8 text-muted-foreground mb-2" />
-              <p className="text-muted-foreground">No upcoming appointments</p>
+              <p className="text-muted-foreground">No upcoming sessions</p>
             </CardContent>
           </Card>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {upcomingAppointments.map((appointment) => (
-              <Card key={appointment._id} className="relative overflow-hidden">
+            {upcomingBookings.map((booking) => (
+              <Card key={booking._id} className="relative overflow-hidden">
                 <div
                   className={`absolute top-0 right-0 px-3 py-1 text-sm ${
-                    statusConfig[appointment.status].color
+                    statusConfig[booking.status].color
                   }`}
                 >
-                  {appointment.status}
+                  {booking.status}
                 </div>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <User className="h-5 w-5" />
-                    {session?.user?.email === appointment.client.email
-                      ? appointment.counselor.name
-                      : appointment.client.name}
+                    {booking.userId.name}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center gap-2 text-sm">
                     <Calendar className="h-4 w-4 text-muted-foreground" />
-                    {format(new Date(appointment.date), "MMMM d, yyyy")}
+                    {format(new Date(booking.date), "MMMM d, yyyy")}
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Clock className="h-4 w-4 text-muted-foreground" />
-                    {appointment.startTime} - {appointment.endTime}
+                    {booking.startTime} - {booking.endTime}
                   </div>
-                  {appointment.status === "PENDING" &&
-                    session?.user?.email === appointment.counselor.email && (
-                      <div className="flex gap-2 mt-4">
-                        <Button
-                          size="sm"
-                          className="flex-1"
-                          onClick={() =>
-                            updateAppointmentStatus(appointment._id, "CONFIRMED")
-                          }
-                        >
-                          Accept
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="flex-1"
-                          onClick={() =>
-                            updateAppointmentStatus(appointment._id, "CANCELLED")
-                          }
-                        >
-                          Decline
-                        </Button>
-                      </div>
-                    )}
+                  <div className="flex items-center gap-2 text-sm">
+                    <DollarSign className="h-4 w-4 text-muted-foreground" />
+                    ${booking.amount}
+                  </div>
+                  {booking.status === "scheduled" && (
+                    <div className="flex gap-2 mt-4">
+                      <Button
+                        size="sm"
+                        className="flex-1 cursor-pointer bg-gradient-primary text-white"
+                        onClick={() =>
+                          updateBookingStatus(booking._id, "completed")
+                        }
+                      >
+                        Mark Complete
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex-1 cursor-pointer" 
+                        onClick={() =>
+                          updateBookingStatus(booking._id, "cancelled")
+                        }
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}
@@ -199,44 +204,46 @@ export default function AppointmentsPage() {
       </div>
 
       <div>
-        <h2 className="text-2xl font-bold mb-6">Past Appointments</h2>
-        {pastAppointments.length === 0 ? (
+        <h2 className="text-2xl font-bold mb-6">Past Sessions</h2>
+        {pastBookings.length === 0 ? (
           <Card>
             <CardContent className="flex flex-col items-center justify-center h-40">
               <Calendar className="h-8 w-8 text-muted-foreground mb-2" />
-              <p className="text-muted-foreground">No past appointments</p>
+              <p className="text-muted-foreground">No past sessions</p>
             </CardContent>
           </Card>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {pastAppointments.map((appointment) => (
+            {pastBookings.map((booking) => (
               <Card
-                key={appointment._id}
+                key={booking._id}
                 className="bg-muted/50 relative overflow-hidden"
               >
                 <div
                   className={`absolute top-0 right-0 px-3 py-1 text-sm ${
-                    statusConfig[appointment.status].color
+                    statusConfig[booking.status].color
                   }`}
                 >
-                  {appointment.status}
+                  {booking.status}
                 </div>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <User className="h-5 w-5" />
-                    {session?.user?.email === appointment.client.email
-                      ? appointment.counselor.name
-                      : appointment.client.name}
+                    {booking.userId.name}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center gap-2 text-sm">
                     <Calendar className="h-4 w-4 text-muted-foreground" />
-                    {format(new Date(appointment.date), "MMMM d, yyyy")}
+                    {format(new Date(booking.date), "MMMM d, yyyy")}
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Clock className="h-4 w-4 text-muted-foreground" />
-                    {appointment.startTime} - {appointment.endTime}
+                    {booking.startTime} - {booking.endTime}
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <DollarSign className="h-4 w-4 text-muted-foreground" />
+                    ${booking.amount}
                   </div>
                 </CardContent>
               </Card>

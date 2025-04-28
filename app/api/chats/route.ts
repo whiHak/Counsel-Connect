@@ -1,15 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
-import { ChatRoom, User, Message } from "@/lib/db/schema";
 import connectDB from "@/lib/db/connect";
+import { ChatRoom, Message, User } from "@/lib/db/schema";
 
 export async function GET(req: NextRequest) {
   try {
-    const token = await getToken({
-      req,
-      secret: process.env.NEXTAUTH_SECRET,
-    });
-
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
     if (!token?.userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -24,59 +20,76 @@ export async function GET(req: NextRequest) {
       ]
     }).sort({ lastMessageDate: -1 });
 
-    // Get unread message counts for each chat room
-    const unreadCounts = await Message.aggregate([
-      {
-        $match: {
-          receiverId: token.userId,
-          read: false
-        }
-      },
-      {
-        $group: {
-          _id: "$chatRoomId",
-          count: { $sum: 1 }
-        }
-      }
-    ]);
-
-    // Create a map of chatRoomId to unread count
-    const unreadCountMap = new Map(
-      unreadCounts.map(({ _id, count }) => [_id.toString(), count])
+    // Get all other user IDs from the chat rooms
+    const otherUserIds = chatRooms.map(room => 
+      room.user1Id.toString() === token.userId 
+        ? room.user2Id 
+        : room.user1Id
     );
 
-    // Get other user details for each chat room
-    const chatRoomsWithDetails = await Promise.all(
+    // Get user details for all other users
+    const users = await User.find(
+      { _id: { $in: otherUserIds } },
+      "name image"
+    );
+
+    // Get unread message counts for each chat room
+    const unreadCounts = await Promise.all(
       chatRooms.map(async (room) => {
-        const otherUserId = room.user1Id.toString() === token.userId 
-          ? room.user2Id 
-          : room.user1Id;
-
-        const otherUser = await User.findById(otherUserId);
-
-        return {
-          _id: room._id,
-          user1Id: room.user1Id,
-          user2Id: room.user2Id,
-          lastMessage: room.lastMessage,
-          lastMessageDate: room.lastMessageDate,
-          otherUser: {
-            _id: otherUser._id,
-            name: otherUser.name,
-            image: otherUser.image,
-            role: otherUser.role
-          },
-          unreadCount: unreadCountMap.get(room._id.toString()) || 0
-        };
+        return Message.countDocuments({
+          chatRoomId: room._id,
+          receiverId: token.userId,
+          read: false
+        });
       })
     );
 
-    return NextResponse.json({ chatRooms: chatRoomsWithDetails });
+    // Format the response
+    const formattedChatRooms = chatRooms.map((room, index) => {
+      const otherUserId = room.user1Id.toString() === token.userId 
+        ? room.user2Id 
+        : room.user1Id;
+      const otherUser = users.find(u => u._id.toString() === otherUserId.toString());
+
+      return {
+        _id: room._id,
+        user: {
+          _id: otherUserId,
+          name: otherUser?.name || "Unknown User",
+          image: otherUser?.image,
+          role: otherUser?.role || "CLIENT"
+        },
+        lastMessage: room.lastMessage,
+        lastMessageDate: room.lastMessageDate ? formatMessageTime(room.lastMessageDate) : null,
+        unreadCount: unreadCounts[index]
+      };
+    });
+
+    return NextResponse.json({ chatRooms: formattedChatRooms });
+
   } catch (error) {
     console.error("Error fetching chat rooms:", error);
     return NextResponse.json(
       { error: "Failed to fetch chat rooms" },
       { status: 500 }
     );
+  }
+}
+
+function formatMessageTime(date: Date): string {
+  const now = new Date();
+  const messageDate = new Date(date);
+  const diffInHours = (now.getTime() - messageDate.getTime()) / (1000 * 60 * 60);
+
+  if (diffInHours < 1) {
+    const minutes = Math.floor((now.getTime() - messageDate.getTime()) / (1000 * 60));
+    return `${minutes} min${minutes === 1 ? '' : 's'} ago`;
+  } else if (diffInHours < 24) {
+    const hours = Math.floor(diffInHours);
+    return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+  } else if (diffInHours < 48) {
+    return 'Yesterday';
+  } else {
+    return messageDate.toLocaleDateString();
   }
 } 
