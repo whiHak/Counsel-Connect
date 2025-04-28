@@ -212,6 +212,11 @@ export default function CounselorDetailPage() {
                 <h3 className="font-semibold mb-2">License</h3>
                 <p>License Number: {counselor.professionalInfo.licenseNumber}</p>
               </div>
+              <div>
+                <h3 className="font-semibold mb-2">Contact</h3>
+                <p>Phone Number: {counselor.personalInfo.phoneNumber}</p>
+                <p>Address: {counselor.personalInfo.address}</p>
+              </div>
             </CardContent>
           </Card>
         </div>
