@@ -57,6 +57,40 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/', request.url))
   }
 
+  // Check if the path starts with /dashboard
+  if (path.startsWith("/dashboard")) {
+    if (!token) {
+      const url = new URL("/auth/signin", request.url)
+      url.searchParams.set("callbackUrl", path)
+      url.searchParams.set("error", "Please sign in to access this page")
+      return NextResponse.redirect(url)
+    }
+
+    // Check if user is a counselor for dashboard access
+    if (userRole !== "COUNSELOR") {
+      const url = new URL("/", request.url)
+      url.searchParams.set("error", "Only counselors can access the dashboard")
+      return NextResponse.redirect(url)
+    }
+  }
+
+  // Check if the path starts with /client
+  if (path.startsWith("/client")) {
+    if (!token) {
+      const url = new URL("/auth/signin", request.url)
+      url.searchParams.set("callbackUrl", path)
+      url.searchParams.set("error", "Please sign in to access this page")
+      return NextResponse.redirect(url)
+    }
+
+    // Check if user is a client
+    if (userRole !== "CLIENT") {
+      const url = new URL("/", request.url)
+      url.searchParams.set("error", "Only clients can access this area")
+      return NextResponse.redirect(url)
+    }
+  }
+
   // If there's a valid session, allow the request to proceed
   return NextResponse.next()
 }
@@ -79,5 +113,6 @@ export const config = {
     '/profile/:path*',
     '/dashboard/:path*',
     '/become-counselor',
+    '/client/:path*',
   ],
 } 
