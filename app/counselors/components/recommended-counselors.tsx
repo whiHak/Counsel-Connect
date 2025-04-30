@@ -132,7 +132,7 @@ export default function RecommendedCounselors() {
                     className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:from-indigo-600 hover:to-purple-600"
                     onClick={(e) => {
                       e.stopPropagation();
-                      router.push(`/book/${counselor._id}`);
+                      router.push(`/counselors/${counselor._id}`);
                     }}
                   >
                     Book Now
