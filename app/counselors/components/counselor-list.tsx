@@ -204,7 +204,7 @@ export default function CounselorList({ filters }: CounselorListProps) {
   return (
     <div className="space-y-6">
       <motion.div 
-        className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+        className="grid gap-6 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 w-full"
         variants={staggerContainer}
         initial="hidden"
         animate="visible"

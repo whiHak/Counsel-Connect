@@ -58,7 +58,7 @@ export default function RecommendedCounselors() {
     return (
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold">Recommended for You</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
             <Card key={i} className="p-4 animate-pulse">
               <div className="flex items-center space-x-4">
@@ -85,7 +85,7 @@ export default function RecommendedCounselors() {
         <ThumbsUp className="w-5 h-5 text-indigo-500" />
         <h2 className="text-2xl font-semibold">Recommended for You</h2>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
         {counselors.map((counselor) => (
           <Card
             key={counselor._id}
