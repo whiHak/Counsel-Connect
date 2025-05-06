@@ -5,8 +5,10 @@ import CounselorSearch, { CounselorFilters } from "./components/counselor-search
 import CounselorList from "./components/counselor-list";
 import RecommendedCounselors from "./components/recommended-counselors";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useSession } from "next-auth/react";
 
 export default function CounselorsPage() {
+  const session = useSession();
   const [filters, setFilters] = useState<CounselorFilters>({
     search: "",
     specialization: "",
@@ -32,7 +34,7 @@ export default function CounselorsPage() {
         </aside>
         
         <main className="space-y-8">
-          {!hasActiveFilters && (
+          {!hasActiveFilters && session.data?.user?.role === "CLIENT" &&(
             <Suspense fallback={<CounselorListSkeleton />}>
               <RecommendedCounselors />
             </Suspense>
