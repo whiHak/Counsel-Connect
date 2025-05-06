@@ -94,7 +94,7 @@ export default function RecommendedCounselors() {
           >
             <div className="flex items-start space-x-4">
               <Avatar className="w-16 h-16">
-                <AvatarImage src={counselor.imageUrl} />
+                <AvatarImage src={counselor.imageUrl} className='object-cover'/>
                 <AvatarFallback className="bg-gradient-to-r from-indigo-400 to-purple-400 text-white text-xl">
                   {counselor.personalInfo.fullName.charAt(0)}
                 </AvatarFallback>

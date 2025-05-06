@@ -193,7 +193,6 @@ export default function CounselorList({ filters }: CounselorListProps) {
         const data = await res.json();
         // Update state with fetched data
         setCounselors(data);
-        console.log(data)
       }
       fetchedCounselors();
     } catch (error) {
@@ -252,10 +251,15 @@ export default function CounselorList({ filters }: CounselorListProps) {
                     </Badge>
                   ))}
                 </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                {counselor.workPreferences.availability[0]?.day  ? (<div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Clock className="h-4 w-4 text-primary/70" />
                   Next Available: {formatDate(counselor.workPreferences.availability[0].day)}
-                </div>
+                </div>):(
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Clock className="h-4 w-4 text-primary/70" />
+                    No availability found
+                  </div>
+                )}
                 <div className="flex items-center justify-between pt-2">
                   <div className="flex items-center gap-2">
                     <Globe2 className="h-4 w-4 text-primary/70" />
@@ -264,7 +268,7 @@ export default function CounselorList({ filters }: CounselorListProps) {
                     </span>
                   </div>
                   <span className="font-semibold text-primary">
-                    ${counselor.workPreferences.hourlyRate.toString()}/hr
+                    ETB {counselor.workPreferences.hourlyRate.toString()}/hr
                   </span>
                 </div>
               </CardContent>

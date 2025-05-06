@@ -230,7 +230,7 @@ export default function CounselorDetailPage() {
             <CardContent className="space-y-4">
               <div>
                 <p className="text-lg font-semibold mb-2">
-                  ${counselor.workPreferences.hourlyRate}/hour
+                  ETB {counselor.workPreferences.hourlyRate}/hour
                 </p>
               </div>
 

@@ -123,7 +123,7 @@ export default function CounselorSearch({ onFiltersChange }: CounselorSearchProp
             <SelectTrigger className="bg-background/50 border-border/50">
               <SelectValue placeholder="Specialization" />
             </SelectTrigger>
-            <SelectContent className="bg-white ">
+            <SelectContent className="bg-gray-50 ">
               {specializations.map((spec) => (
                 <SelectItem key={spec} value={spec.toLowerCase()}>
                   {spec}
@@ -141,7 +141,7 @@ export default function CounselorSearch({ onFiltersChange }: CounselorSearchProp
             <SelectTrigger className="bg-background/50 border-border/50">
               <SelectValue placeholder="Language" />
             </SelectTrigger>
-            <SelectContent className="bg-white ">
+            <SelectContent className="bg-gray-50 ">
               {languages.map((lang) => (
                 <SelectItem key={lang} value={lang.toLowerCase()}>
                   {lang}

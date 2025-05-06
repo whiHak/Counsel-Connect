@@ -76,7 +76,7 @@ export default function DashboardPage() {
     },
     {
       title: "Total Earnings",
-      value: `$${stats?.totalEarnings || 0}`,
+      value: `ETB ${stats?.totalEarnings || 0}`,
       description: "Last 30 days",
       icon: DollarSign,
       color: "text-green-500",

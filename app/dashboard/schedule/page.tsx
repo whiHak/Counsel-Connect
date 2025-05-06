@@ -348,7 +348,7 @@ export default function SchedulePage() {
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-2">
-            <span className="text-muted-foreground">$</span>
+            <span className="text-muted-foreground">ETB</span>
             <Input
               type="number"
               value={hourlyRate}

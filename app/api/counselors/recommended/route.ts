@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
       // If no profile exists, return general recommendations
       const counselors = await Counselor.find()
         .sort({ "professionalInfo.yearsOfExperience": -1 })
-        .limit(6);
+        .limit(3);
       
       return NextResponse.json({ 
         counselors: counselors.map(c => ({
@@ -80,7 +80,7 @@ export async function GET(req: NextRequest) {
     // Sort by match score and take top 6
     const recommendedCounselors = counselorsWithScores
       .sort((a, b) => b.matchScore - a.matchScore)
-      .slice(0, 6);
+      .slice(0, 3);
 
     return NextResponse.json({ counselors: recommendedCounselors });
   } catch (error) {
