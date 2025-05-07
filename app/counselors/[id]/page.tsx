@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -55,6 +56,7 @@ interface CounselorProfile {
 export default function CounselorDetailPage() {
   const params = useParams();
   const { toast } = useToast();
+  const { data: session } = useSession();
   const [counselor, setCounselor] = useState<CounselorProfile | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedSlot, setSelectedSlot] = useState<string>("");
@@ -77,7 +79,8 @@ export default function CounselorDetailPage() {
     }
   }, [params.id]);
 
-  const handleBookSession = async () => {
+  const handleBookSession = async (e: any) => {
+    e.preventDefault();
     if (!selectedDate || !selectedSlot) {
       toast({
         title: "Error",
@@ -92,38 +95,72 @@ export default function CounselorDetailPage() {
     }
 
     try {
-      const response = await fetch("/api/bookings", {
+      // First, validate the time slot availability
+      const [startTime, endTime] = selectedSlot.split("-");
+      const validationResponse = await fetch("/api/bookings/validate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          counselorId: counselor?.userId,
+          counselorId: counselor?.id,
           date: selectedDate,
-          timeSlot: selectedSlot,
-          sessionType,
+          startTime,
+          endTime,
         }),
       });
 
+      const validationData = await validationResponse.json();
+
+      if (!validationResponse.ok) {
+        toast({
+          title: "Error",
+          description: validationData.error || "This time slot is not available",
+          variant: "destructive",
+          style: {
+            backgroundColor: "#f44336",
+            color: "#fff",
+          },
+        });
+        return;
+      }
+
+      // If validation passes, create checkout session
+      const response = await fetch("/api/checkout_session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          counselorId: counselor?.id,
+          date: selectedDate,
+          timeSlot: selectedSlot,
+          sessionType,
+          amount: counselor?.workPreferences.hourlyRate
+        }),
+      });
+
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error("Failed to book session");
+        throw new Error(data.error || "Failed to create checkout session");
       }
 
       toast({
-        title: "Success",
-        description: "Session booked successfully!",
-        variant: "default",
+        title: "Redirecting to checkout",
+        description: "Please complete your payment to confirm the booking",
         style: {
           backgroundColor: "#4caf50",
           color: "#fff",
         },
       });
-      // after successful booking navigate to /messages page
-      router.push("/messages");
-    } catch (error) {
+
+      // Use router.push for the redirect
+      router.push(data.url);
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to book session. Please try again.",
+        description: error.message || "Failed to book session. Please try again.",
         variant: "destructive",
         style: {
           backgroundColor: "#f44336",
@@ -302,13 +339,43 @@ export default function CounselorDetailPage() {
                 </Select>
               </div>
 
+
+              {/* <form method="POST" action="https://api.chapa.co/v1/hosted/pay" >
+                <input type="hidden" name="public_key" value={process.env.NEXT_PUBLIC_TEST_KEY} />
+                <input type="hidden" name="tx_ref" value={`booking-${counselor.userId}-${selectedDate?.toISOString().replace(/[-:]/g, '_')}-${selectedSlot.replace(/[^a-zA-Z0-9_.-]/g, '_')}`} />
+                <input type="hidden" name="amount" value={counselor.workPreferences.hourlyRate} />
+                <input type="hidden" name="currency" value="ETB" />
+                <input type="hidden" name="email" value={session?.user?.email} />
+                <input type="hidden" name="first_name" value={session?.user?.name?.split(' ')[0]} />
+                <input type="hidden" name="last_name" value={session?.user?.name?.split(' ')[1] || ''} />
+                <input type="hidden" name="title" value={`Counseling Session with ${counselor.personalInfo.fullName}`} />
+                <input type="hidden" name="description" value={`${sessionType} session on ${selectedDate?.toLocaleDateString()} at ${selectedSlot}`} />
+                <input type="hidden" name="logo" value={counselor.imageUrl} />
+                <input type="hidden" name="callback_url" value={`${process.env.NEXT_PUBLIC_APP_URL}/api/bookings/verify-payment`} />
+                <input type="hidden" name="return_url" value={process.env.NEXT_PUBLIC_CHAPA_RETURN_URL} />
+                <input type="hidden" name="meta[counselorId]" value={counselor.userId} />
+                <input type="hidden" name="meta[date]" value={selectedDate?.toISOString()} />
+                <input type="hidden" name="meta[timeSlot]" value={selectedSlot} />
+                <input type="hidden" name="meta[sessionType]" value={sessionType} />
+                <Button
+                  className="w-full bg-gradient-primary text-white cursor-pointer"
+                  size="lg"
+                  type="submit"
+                  disabled={!selectedDate || !selectedSlot}
+                >
+                  Pay & Book Session
+                </Button>
+            </form> */}
+            <form method="POST" onSubmit={handleBookSession}>
               <Button
-                className="w-full bg-gradient-primary text-white cursor-pointer"
-                size="lg"
-                onClick={handleBookSession}
-              >
-                Book Session
-              </Button>
+                  className="w-full bg-gradient-primary text-white cursor-pointer"
+                  size="lg"
+                  type="submit"
+                  disabled={!selectedDate || !selectedSlot}
+                >
+                  Pay & Book Session
+                </Button>
+            </form>
             </CardContent>
           </Card>
         </div>
