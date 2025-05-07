@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
     // Get user details for all other users
     const users = await User.find(
       { _id: { $in: otherUserIds } },
-      "name image"
+      "name image role"
     );
 
     // Get unread message counts for each chat room
