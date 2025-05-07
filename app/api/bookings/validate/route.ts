@@ -19,7 +19,9 @@ export async function POST(req: NextRequest) {
     const { counselorId, date, startTime, endTime } = await req.json();
 
     // Validate counselor exists
-    const counselor = await Counselor.findById(counselorId);
+    const counselor = await Counselor.findOne({
+      userId: counselorId,
+    });
     if (!counselor) {
       return NextResponse.json(
         { error: "Counselor not found" },

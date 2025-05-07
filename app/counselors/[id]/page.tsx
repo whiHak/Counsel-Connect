@@ -103,7 +103,7 @@ export default function CounselorDetailPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          counselorId: counselor?.id,
+          counselorId: counselor?.userId,
           date: selectedDate,
           startTime,
           endTime,
