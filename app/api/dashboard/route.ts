@@ -44,14 +44,47 @@ export async function GET(req: NextRequest) {
       : 0;
 
     // Get upcoming sessions
-    const upcomingSessions = await Booking.find({
+    const sessions = await Booking.find({
       counselorId: token.userId,
-      date: { $gte: new Date() },
       status: "scheduled" 
     })
     .sort({ date: 1, startTime: 1 })
     .limit(5)
     .populate("userId", "name image");
+
+    const currentDate = new Date();
+    const upcomingSessions = sessions.filter((booking) => {
+      const bookingDate = new Date(booking.date);
+      const bookingTime = booking.startTime.split(':');
+      const bookingDateTime = new Date(
+        bookingDate.getFullYear(),
+        bookingDate.getMonth(),
+        bookingDate.getDate(),
+        parseInt(bookingTime[0]),
+        parseInt(bookingTime[1])
+      );
+      return bookingDateTime >= currentDate;
+    }).sort((a, b) => {
+      const aDate = new Date(a.date);
+      const bDate = new Date(b.date);
+      const aTime = a.startTime.split(':');
+      const bTime = b.startTime.split(':');
+      const aDateTime = new Date(
+        aDate.getFullYear(),
+        aDate.getMonth(),
+        aDate.getDate(),
+        parseInt(aTime[0]),
+        parseInt(aTime[1])
+      );
+      const bDateTime = new Date(
+        bDate.getFullYear(),
+        bDate.getMonth(),
+        bDate.getDate(),
+        parseInt(bTime[0]),
+        parseInt(bTime[1])
+      );
+      return aDateTime.getTime() - bDateTime.getTime();
+    });
 
     // Get recent messages
     const chatRooms = await ChatRoom.find({

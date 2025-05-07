@@ -120,16 +120,73 @@ export default function AppointmentsPage() {
     );
   }
 
-  const upcomingBookings = bookings.filter(
-    (booking) =>
-      booking.status === "scheduled" && new Date(`${booking.date}`) > new Date()
-  );
+  const currentDate = new Date();
+  const upcomingBookings = bookings.filter((booking) => {
+    const bookingDate = new Date(booking.date);
+    const bookingTime = booking.startTime.split(':');
+    const bookingDateTime = new Date(
+      bookingDate.getFullYear(),
+      bookingDate.getMonth(),
+      bookingDate.getDate(),
+      parseInt(bookingTime[0]),
+      parseInt(bookingTime[1])
+    );
+    return bookingDateTime >= currentDate;
+  }).sort((a, b) => {
+    const aDate = new Date(a.date);
+    const bDate = new Date(b.date);
+    const aTime = a.startTime.split(':');
+    const bTime = b.startTime.split(':');
+    const aDateTime = new Date(
+      aDate.getFullYear(),
+      aDate.getMonth(),
+      aDate.getDate(),
+      parseInt(aTime[0]),
+      parseInt(aTime[1])
+    );
+    const bDateTime = new Date(
+      bDate.getFullYear(),
+      bDate.getMonth(),
+      bDate.getDate(),
+      parseInt(bTime[0]),
+      parseInt(bTime[1])
+    );
+    return aDateTime.getTime() - bDateTime.getTime();
+  });
 
-  const pastBookings = bookings.filter(
-    (booking) =>
-      booking.status !== "scheduled" ||
-      new Date(`${booking.date}`) <= new Date()
-  );
+  const pastBookings = bookings.filter((booking) => {
+    const bookingDate = new Date(booking.date);
+    const bookingTime = booking.startTime.split(':');
+    const bookingDateTime = new Date(
+      bookingDate.getFullYear(),
+      bookingDate.getMonth(),
+      bookingDate.getDate(),
+      parseInt(bookingTime[0]),
+      parseInt(bookingTime[1])
+    );
+    return bookingDateTime < currentDate;
+  }).sort((a, b) => {
+    const aDate = new Date(a.date);
+    const bDate = new Date(b.date);
+    const aTime = a.startTime.split(':');
+    const bTime = b.startTime.split(':');
+    const aDateTime = new Date(
+      aDate.getFullYear(),
+      aDate.getMonth(),
+      aDate.getDate(),
+      parseInt(aTime[0]),
+      parseInt(aTime[1])
+    );
+    const bDateTime = new Date(
+      bDate.getFullYear(),
+      bDate.getMonth(),
+      bDate.getDate(),
+      parseInt(bTime[0]),
+      parseInt(bTime[1])
+    );
+    return bDateTime.getTime() - aDateTime.getTime();
+  });
+
 
   console.log(upcomingBookings, pastBookings);
   return (
@@ -173,7 +230,7 @@ export default function AppointmentsPage() {
                     {booking.startTime} - {booking.endTime}
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <DollarSign className="h-4 w-4 text-muted-foreground" />$
+                    ETB{" "}
                     {booking.amount}
                   </div>
                   {booking.status === "scheduled" && (
@@ -248,7 +305,7 @@ export default function AppointmentsPage() {
                     {booking.startTime} - {booking.endTime}
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <DollarSign className="h-4 w-4 text-muted-foreground" />$
+                    ETB{" "}
                     {booking.amount}
                   </div>
                 </CardContent>
