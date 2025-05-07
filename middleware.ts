@@ -32,8 +32,6 @@ export async function middleware(request: NextRequest) {
   const userRole = token.role as string
   const isProfileComplete = token.isProfileComplete as boolean
 
-  console.log('Token in middleware:', token) // For debugging
-
   // Profile completion check for clients
   if (
     userRole === 'CLIENT' && 
