@@ -132,15 +132,15 @@ export async function GET(req: NextRequest) {
 
     await connectDB();
     const { searchParams } = new URL(req.url);
-
+    
     const bookings = await Booking.find({
       counselorId: token.userId,
-      date: { $gte: new Date() },
       status: "scheduled" 
     })
     .sort({ date: 1, startTime: 1 })
     .limit(5)
     .populate("userId", "name image");
+    console.log(bookings)
 
     return NextResponse.json({ bookings });
   } catch (error) {

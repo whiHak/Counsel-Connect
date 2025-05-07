@@ -16,6 +16,7 @@ import {
   DollarSign,
 } from "lucide-react";
 import { format } from "date-fns";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface Booking {
   _id: string;
@@ -120,14 +121,13 @@ export default function AppointmentsPage() {
   }
 
   const upcomingBookings = bookings.filter(
-    (booking) => 
-      booking.status === "scheduled" && 
-      new Date(`${booking.date}`) > new Date()
+    (booking) =>
+      booking.status === "scheduled" && new Date(`${booking.date}`) > new Date()
   );
-  
+
   const pastBookings = bookings.filter(
-    (booking) => 
-      booking.status !== "scheduled" || 
+    (booking) =>
+      booking.status !== "scheduled" ||
       new Date(`${booking.date}`) <= new Date()
   );
 
@@ -156,7 +156,10 @@ export default function AppointmentsPage() {
                 </div>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <User className="h-5 w-5" />
+                    <Avatar className="w-8 h-8">
+                      <AvatarImage src={booking.userId.image || ""} />
+                      <AvatarFallback>{booking.userId.name}</AvatarFallback>
+                    </Avatar>
                     {booking.userId.name}
                   </CardTitle>
                 </CardHeader>
@@ -170,8 +173,8 @@ export default function AppointmentsPage() {
                     {booking.startTime} - {booking.endTime}
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <DollarSign className="h-4 w-4 text-muted-foreground" />
-                    ${booking.amount}
+                    <DollarSign className="h-4 w-4 text-muted-foreground" />$
+                    {booking.amount}
                   </div>
                   {booking.status === "scheduled" && (
                     <div className="flex gap-2 mt-4">
@@ -187,7 +190,7 @@ export default function AppointmentsPage() {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="flex-1 cursor-pointer" 
+                        className="flex-1 cursor-pointer"
                         onClick={() =>
                           updateBookingStatus(booking._id, "cancelled")
                         }
@@ -228,7 +231,10 @@ export default function AppointmentsPage() {
                 </div>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <User className="h-5 w-5" />
+                    <Avatar className="w-8 h-8">
+                      <AvatarImage src={booking.userId.image || ""} />
+                      <AvatarFallback>{booking.userId.name}</AvatarFallback>
+                    </Avatar>
                     {booking.userId.name}
                   </CardTitle>
                 </CardHeader>
@@ -242,8 +248,8 @@ export default function AppointmentsPage() {
                     {booking.startTime} - {booking.endTime}
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <DollarSign className="h-4 w-4 text-muted-foreground" />
-                    ${booking.amount}
+                    <DollarSign className="h-4 w-4 text-muted-foreground" />$
+                    {booking.amount}
                   </div>
                 </CardContent>
               </Card>
@@ -253,4 +259,4 @@ export default function AppointmentsPage() {
       </div>
     </div>
   );
-} 
+}
