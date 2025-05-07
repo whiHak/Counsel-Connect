@@ -318,13 +318,43 @@ export default function CounselorDetailPage() {
                     <SelectValue placeholder="Select a time slot" />
                   </SelectTrigger>
                   <SelectContent className="bg-gray-50">
-                    {counselor.workPreferences.availability
-                      .find(
-                        (a) =>
-                          formatDate(a.day) ===
-                          formatDate(selectedDate?.toDateString() || "")
-                      )
-                      ?.slots.map((slot) => (
+                    {(() => {
+                      const availableDay = counselor.workPreferences.availability
+                        .find(
+                          (a) =>
+                            formatDate(a.day) ===
+                            formatDate(selectedDate?.toDateString() || "")
+                        );
+
+                      if (!availableDay) {
+                        return (
+                          <SelectItem value="-" disabled>
+                            No time slots available for this date
+                          </SelectItem>
+                        );
+                      }
+
+                      const currentTime = new Date();
+                      const filteredSlots = availableDay.slots.filter((slot) => {
+                        if (!isToday(selectedDate!)) return true;
+                        
+                        const [hours, minutes] = slot.startTime.split(':');
+                        const slotTime = new Date();
+                        slotTime.setHours(parseInt(hours), parseInt(minutes), 0);
+                        return slotTime > currentTime;
+                      });
+
+                      if (filteredSlots.length === 0) {
+                        return (
+                          <SelectItem value="-" disabled>
+                            {isToday(selectedDate!) 
+                              ? "No more time slots available today"
+                              : "No time slots available for this date"}
+                          </SelectItem>
+                        );
+                      }
+
+                      return filteredSlots.map((slot) => (
                         <SelectItem
                           key={`${slot.startTime}-${slot.endTime}`}
                           value={`${slot.startTime}-${slot.endTime}`}
@@ -334,7 +364,8 @@ export default function CounselorDetailPage() {
                             {slot.startTime} - {slot.endTime}
                           </div>
                         </SelectItem>
-                      ))}
+                      ));
+                    })()}
                   </SelectContent>
                 </Select>
               </div>
