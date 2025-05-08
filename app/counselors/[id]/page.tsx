@@ -19,6 +19,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Clock, MessageSquare, Star, Video } from "lucide-react";
 import { format, isToday, isTomorrow } from "date-fns";
 import formatDate, { disablePastDates } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface CounselorProfile {
   id: string;
@@ -62,6 +63,7 @@ export default function CounselorDetailPage() {
   const [selectedSlot, setSelectedSlot] = useState<string>("");
   const [sessionType, setSessionType] = useState<"video" | "chat">("video");
   const router = useRouter();
+  const {t} = useLanguage();
 
   useEffect(() => {
     const fetchCounselor = async () => {
@@ -225,18 +227,18 @@ export default function CounselorDetailPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>About</CardTitle>
+              <CardTitle>{t('counselors.card.about')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <h3 className="font-semibold mb-2">Experience</h3>
+                <h3 className="font-semibold mb-2">{t('counselors.filters.experience')}</h3>
                 <p>
                   {counselor.professionalInfo.yearsOfExperience} years of
                   professional experience
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold mb-2">Languages</h3>
+                <h3 className="font-semibold mb-2">{t('counselors.filters.language')}</h3>
                 <div className="flex flex-wrap gap-2">
                   {counselor.professionalInfo.languages.map((lang) => (
                     <Badge key={lang} variant="outline">
@@ -262,7 +264,7 @@ export default function CounselorDetailPage() {
         <div className="space-y-6 md:col-span-2">
           <Card>
             <CardHeader>
-              <CardTitle>Book a Session</CardTitle>
+              <CardTitle>{t('counselors.card.bookSession')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
@@ -404,7 +406,7 @@ export default function CounselorDetailPage() {
                   type="submit"
                   disabled={!selectedDate || !selectedSlot}
                 >
-                  Pay & Book Session
+                  {t('counselors.card.payAndBook')}
                 </Button>
             </form>
             </CardContent>

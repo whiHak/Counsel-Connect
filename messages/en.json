@@ -94,7 +94,10 @@
       "perHour": "/hour",
       "languages": "Languages",
       "specializations": "Specializations",
-      "matchScore": "Match Score"
+      "matchScore": "Match Score",
+      "bookSession": "Book a Session",
+      "about": "About",
+      "payAndBook": "Pay and Book Session"
     }
   },
   "becomeCounselor": {

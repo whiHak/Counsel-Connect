@@ -10,6 +10,7 @@ import { CounselorFilters } from "./counselor-search";
 import { motion } from "framer-motion";
 import formatDate, { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Counselor {
   _id: string;
@@ -148,6 +149,7 @@ const staggerContainer = {
 
 export default function CounselorList({ filters }: CounselorListProps) {
   const[counselors, setCounselors] = useState<Counselor[]>([]);
+  const { t } = useLanguage();
   const filteredCounselors = counselors.filter((counselor) => {
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
@@ -278,7 +280,7 @@ export default function CounselorList({ filters }: CounselorListProps) {
                   className="flex-1 bg-gradient-primary hover:opacity-90 transition-opacity text-white"
                 >
                   <Link href={`/counselors/${counselor._id}`}>
-                    View Profile
+                  {t('counselors.card.viewProfile')}
                   </Link>
                 </Button>
                 <Button 

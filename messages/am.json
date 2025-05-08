@@ -94,7 +94,10 @@
       "perHour": "/በሰዓት",
       "languages": "ቋንቋዎች",
       "specializations": "ስፔሻላይዜሽኖች",
-      "matchScore": "የመመሳሰል ደረጃ"
+      "matchScore": "የመመሳሰል ደረጃ",
+      "bookSession": "ክፍለ ጊዜውን ይያዙ",
+      "about": "ስለ አማካሪው",
+      "payAndBook": "ይከፍሉ እና ክፍለ ጊዜውን ይያዙ"
     }
   },
   "becomeCounselor": {
