@@ -1,0 +1,210 @@
+{
+  "hero": {
+    "tagline": "Helping you find peace and clarity",
+    "title": "Your Journey to Mental Wellness Starts Here",
+    "subtitle": "Connect with professional counselors in a safe, private environment. Get the support you need, when you need it.",
+    "findCounselor": "Find a Counselor",
+    "learnMore": "Learn More"
+  },
+  "nav": {
+    "findCounselors": "Find Counselors",
+    "howItWorks": "How It Works",
+    "messages": "Messages",
+    "appointments": "My Appointments",
+    "becomeCounselor": "Become a Counselor",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "favorites": "Favorites",
+    "settings": "Settings",
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "getStarted": "Get Started"
+  },
+  "appointments": {
+    "title": "My Appointments",
+    "upcoming": "Upcoming Sessions",
+    "past": "Past Sessions",
+    "noUpcoming": "No upcoming appointments",
+    "noPast": "No past appointments",
+    "schedule": "Schedule New Session",
+    "card": {
+      "with": "with",
+      "date": "Date",
+      "time": "Time",
+      "duration": "Duration",
+      "status": {
+        "scheduled": "Scheduled",
+        "pending": "Pending",
+        "cancelled": "Cancelled",
+        "completed": "Completed"
+      },
+      "actions": {
+        "reschedule": "Reschedule",
+        "cancel": "Cancel",
+        "join": "Join Session",
+        "review": "Leave Review"
+      }
+    },
+    "filters": {
+      "all": "All Sessions",
+      "confirmed": "Confirmed",
+      "pending": "Pending",
+      "cancelled": "Cancelled",
+      "completed": "Completed"
+    },
+    "modal": {
+      "cancel": {
+        "title": "Cancel Appointment",
+        "message": "Are you sure you want to cancel this appointment?",
+        "reason": "Reason for cancellation",
+        "confirm": "Yes, Cancel",
+        "back": "Go Back"
+      },
+      "reschedule": {
+        "title": "Reschedule Appointment",
+        "message": "Select a new date and time",
+        "confirm": "Confirm New Time",
+        "back": "Go Back"
+      }
+    }
+  },
+  "counselors": {
+    "title": "Find Your Counselor",
+    "searchResults": "Search Results",
+    "filters": {
+      "search": "Search counselors...",
+      "specialization": "Specialization",
+      "language": "Language",
+      "maxPrice": "Maximum Price",
+      "experience": "Years of Experience",
+      "reset": "Reset Filters"
+    },
+    "recommended": {
+      "title": "Recommended for You",
+      "loading": "Loading recommendations..."
+    },
+    "noResults": {
+      "title": "No counselors found",
+      "description": "We couldn't find any counselors matching your criteria. Try adjusting your filters.",
+      "reset": "Reset Filters"
+    },
+    "card": {
+      "viewProfile": "View Profile",
+      "yearsExp": "years exp.",
+      "perHour": "/hour",
+      "languages": "Languages",
+      "specializations": "Specializations",
+      "matchScore": "Match Score"
+    }
+  },
+  "becomeCounselor": {
+    "title": "Become a Counselor",
+    "subtitle": "Join our platform as a mental health professional and make a difference in people's lives.",
+    "form": {
+      "personalInfo": {
+        "title": "Personal Information",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email",
+        "phone": "Phone Number",
+        "dob": "Date of Birth",
+        "address": "Address"
+      },
+      "professionalInfo": {
+        "title": "Professional Information",
+        "specialization": "Specialization",
+        "experience": "Years of Experience",
+        "license": "License Number",
+        "languages": "Languages",
+        "rate": "Hourly Rate",
+        "bio": "Professional Bio"
+      },
+      "documents": {
+        "title": "Required Documents",
+        "license": "Professional License",
+        "education": "Educational Credentials",
+        "id": "Government ID",
+        "photo": "Professional Photo",
+        "experience": "Work Experience",
+        "cv": "CV/Resume"
+      },
+      "submit": "Submit Application",
+      "pending": "Application Under Review"
+    }
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "subtitle": "Get mental health care in simple steps",
+    "steps": [
+        {
+          "title": "Find Your Counselor",
+          "description":
+            "Browse through our verified counselors and find the one that best matches your needs. Filter by specialization, language, and availability."
+        },
+        {
+          "title": "Book a Session",
+          "description":
+            "Choose a convenient time slot from your counselor's schedule and book your session. You can opt for video calls or chat-based counseling."
+        },
+        {
+          "title": "Initial Consultation",
+          "description":
+            "Have a brief consultation with your counselor to discuss your needs and ensure they're the right fit for you."
+        },
+        {
+          "title": "Regular Sessions",
+          "description":
+            "Engage in regular counseling sessions through our secure platform. Your counselor will help you work through your challenges."
+        },
+        {
+          "title": "Track Progress",
+          "description":
+            "Monitor your progress through session notes and personal growth markers. Your counselor will help you set and achieve goals."
+        },
+        {
+          "title": "Provide Feedback",
+          "description":
+            "Share your experience and help others find the right counselor by providing feedback and ratings after your sessions."
+        }
+      ]
+  },
+  "benefits": {
+    "title": "Why People Choose CounselConnect",
+    "subtitle": "Experience the benefits of our modern approach to online counseling",
+    "items": [
+      "Access to licensed professionals",
+      "Convenient online sessions",
+      "Personalized treatment plans",
+      "Flexible scheduling options",
+      "Secure & private platform",
+      "Continuous support between sessions"
+    ]
+  },
+  "features": {
+    "title": "How CounselConnect Works",
+    "subtitle": "We provide a comprehensive platform for your mental health journey",
+    "items": {
+      "secureMessaging": {
+        "title": "Secure Messaging",
+        "description": "Private, encrypted conversations with your counselor"
+      },
+      "flexibleScheduling": {
+        "title": "Flexible Scheduling",
+        "description": "Book sessions that fit your schedule"
+      },
+      "completePrivacy": {
+        "title": "Complete Privacy",
+        "description": "Your data and conversations are fully protected"
+      },
+      "expertCounselors": {
+        "title": "Expert Counselors",
+        "description": "Connect with qualified and experienced professionals"
+      }
+    }
+  },
+  "cta": {
+    "title": "Ready to Start Your Journey?",
+    "subtitle": "Take the first step towards better mental health. Our counselors are here to support you.",
+    "button": "Find Your Counselor Today"
+  }
+} 

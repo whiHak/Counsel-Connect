@@ -6,9 +6,11 @@ import CounselorList from "./components/counselor-list";
 import RecommendedCounselors from "./components/recommended-counselors";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useSession } from "next-auth/react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function CounselorsPage() {
   const session = useSession();
+  const { t } = useLanguage();
   const [filters, setFilters] = useState<CounselorFilters>({
     search: "",
     specialization: "",
@@ -26,7 +28,7 @@ export default function CounselorsPage() {
 
   return (
     <div className="container mx-auto px-4 py-4">
-      <h1 className="text-3xl font-bold mb-8">Find Your Counselor</h1>
+      <h1 className="text-3xl font-bold mb-8">{t('counselors.title')}</h1>
       
       <div className="grid lg:grid-cols-[400px_1fr] gap-8">
         <aside className="space-y-6">
@@ -42,7 +44,7 @@ export default function CounselorsPage() {
           
           <div>
             {hasActiveFilters && (
-              <h2 className="text-2xl font-semibold mb-4">Search Results</h2>
+              <h2 className="text-2xl font-semibold mb-4">{t('counselors.searchResults')}</h2>
             )}
             <Suspense fallback={<CounselorListSkeleton />}>
               <CounselorList filters={filters} />

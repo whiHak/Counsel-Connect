@@ -24,10 +24,13 @@ import {
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export function Navbar() {
   const { data: session } = useSession();
   const [scrolled, setScrolled] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -66,13 +69,13 @@ export function Navbar() {
               <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-[linear-gradient(to_right,#7C3AED,#2563EB)] transition-all group-hover:w-full"></span>
             </Link>
 
-            <div className="hidden md:flex items-center space-x-1">
+            <div className="hidden md:flex items-center space-x-4">
               <Link href="/counselors">
                 <Button
                   variant="ghost"
                   className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
                 >
-                  Find Counselors
+                  {t('nav.findCounselors')}
                 </Button>
               </Link>
               <Link href="/how-it-works">
@@ -80,7 +83,7 @@ export function Navbar() {
                   variant="ghost"
                   className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
                 >
-                  How It Works
+                  {t('nav.howItWorks')}
                 </Button>
               </Link>
               {session?.user.role === "CLIENT" && (
@@ -90,7 +93,7 @@ export function Navbar() {
                       variant="ghost"
                       className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
                     >
-                      Messages
+                      {t('nav.messages')}
                     </Button>
                   </Link>
                   <Link href="/appointments">
@@ -98,7 +101,7 @@ export function Navbar() {
                       variant="ghost"
                       className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
                     >
-                      My Appointments
+                      {t('nav.appointments')}
                     </Button>
                   </Link>
                   <Link href="/become-counselor">
@@ -106,7 +109,7 @@ export function Navbar() {
                       variant="ghost"
                       className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
                     >
-                      Become a Counselor
+                      {t('nav.becomeCounselor')}
                     </Button>
                   </Link>
                 </>
@@ -118,7 +121,7 @@ export function Navbar() {
                       variant="ghost"
                       className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
                     >
-                      Messages
+                      {t('nav.messages')}
                     </Button>
                   </Link>
                   <Link href="/dashboard">
@@ -126,7 +129,7 @@ export function Navbar() {
                       variant="ghost"
                       className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
                     >
-                      Dashboard
+                      {t('nav.dashboard')}
                     </Button>
                   </Link>
                 </>
@@ -136,11 +139,12 @@ export function Navbar() {
 
           <AnimatePresence>
             <motion.div
-              className="flex items-center space-x-4 "
+              className="flex items-center space-x-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
             >
+              <LanguageSwitcher />
               {session ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -190,39 +194,31 @@ export function Navbar() {
                     <DropdownMenuSeparator className="my-2" />
                     <div className="space-y-1">
                       <DropdownMenuItem className="flex items-center rounded-lg cursor-pointer hover:bg-primary/10 transition-colors">
-                        <User className="mr-2 h-4 w-4 text-primary" />
-                        <Link href="/profile">Profile</Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="flex items-center rounded-lg cursor-pointer hover:bg-primary/10 transition-colors">
                         <MessageSquare className="mr-2 h-4 w-4 text-primary" />
-                        <Link href="/messages">Messages</Link>
+                        <Link href="/messages">{t('nav.messages')}</Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem className="flex items-center rounded-lg cursor-pointer hover:bg-primary/10 transition-colors">
                         <Calendar className="mr-2 h-4 w-4 text-primary" />
-                        <Link href="/appointments">Appointments</Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="flex items-center rounded-lg cursor-pointer hover:bg-primary/10 transition-colors">
-                        <Heart className="mr-2 h-4 w-4 text-primary" />
-                        <Link href="/favorites">Favorites</Link>
+                        <Link href="/appointments">{t('nav.appointments')}</Link>
                       </DropdownMenuItem>
                       {session?.user.role === "COUNSELOR" && (
                         <DropdownMenuItem className="flex items-center rounded-lg cursor-pointer hover:bg-primary/10 transition-colors">
                           <Settings className="mr-2 h-4 w-4 text-primary" />
-                          <Link href="/dashboard">Dashboard</Link>
+                          <Link href="/dashboard">{t('nav.dashboard')}</Link>
                         </DropdownMenuItem>
                       )}
                       {session?.user.role === "CLIENT" && (
                         <DropdownMenuItem className="flex items-center rounded-lg cursor-pointer hover:bg-primary/10 transition-colors">
                           <Settings className="mr-2 h-4 w-4 text-primary" />
                           <Link href="/become-counselor">
-                            Become a Counselor
+                            {t('nav.becomeCounselor')}
                           </Link>
                         </DropdownMenuItem>
                       )}
 
                       <DropdownMenuItem className="flex items-center rounded-lg cursor-pointer hover:bg-primary/10 transition-colors">
                         <Settings className="mr-2 h-4 w-4 text-primary" />
-                        <Link href="/settings">Settings</Link>
+                        <Link href="/settings">{t('nav.settings')}</Link>
                       </DropdownMenuItem>
                     </div>
                     <DropdownMenuSeparator className="my-2" />
@@ -231,7 +227,7 @@ export function Navbar() {
                       onClick={() => signOut()}
                     >
                       <LogOut className="mr-2 h-4 w-4" />
-                      Sign Out
+                      {t('nav.signOut')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -242,14 +238,14 @@ export function Navbar() {
                     onClick={() => signIn("google")}
                     className="text-muted-foreground hover:text-primary hover:bg-primary/10 bg-transparent transition-colors cursor-pointer hidden md:block"
                   >
-                    Sign In
+                    {t('nav.signIn')}
                   </Button>
                   <Button
                     onClick={() => signIn("google")}
                     className="bg-[linear-gradient(to_right,#7C3AED,#2563EB)] hover:opacity-90 text-white gap-2 shadow-lg shadow-primary/25 cursor-pointer"
                   >
                     <Sparkles className="h-4 w-4" />
-                    Get Started
+                    {t('nav.getStarted')}
                   </Button>
                 </div>
               )}

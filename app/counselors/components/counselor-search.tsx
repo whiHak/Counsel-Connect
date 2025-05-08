@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Search, X, Filter, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export interface CounselorFilters {
   search: string;
@@ -57,6 +58,7 @@ export default function CounselorSearch({ onFiltersChange }: CounselorSearchProp
     maxPrice: 200,
     minExperience: 0,
   });
+  const { t } = useLanguage();
 
   const handleFilterChange = (key: keyof CounselorFilters, value: string | number) => {
     const newFilters = { ...filters, [key]: value };
@@ -89,7 +91,7 @@ export default function CounselorSearch({ onFiltersChange }: CounselorSearchProp
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Filter className="h-5 w-5 text-primary" />
-          <h2 className="text-lg font-semibold">Search Filters</h2>
+          <h2 className="text-lg font-semibold">{t('counselors.title')}</h2>
         </div>
         <Button 
           variant="ghost" 
@@ -98,7 +100,7 @@ export default function CounselorSearch({ onFiltersChange }: CounselorSearchProp
           className="text-muted-foreground hover:text-foreground"
         >
           <X className="h-4 w-4 mr-2" />
-          Clear All
+          {t('counselors.filters.reset')}
         </Button>
       </div>
 
@@ -106,7 +108,7 @@ export default function CounselorSearch({ onFiltersChange }: CounselorSearchProp
         <div className="relative">
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search counselors..."
+            placeholder={t('counselors.filters.search')}
             className="pl-9 bg-background/50 border-border/50 focus:border-primary/50"
             value={filters.search}
             onChange={(e) => handleFilterChange("search", e.target.value)}
@@ -121,7 +123,7 @@ export default function CounselorSearch({ onFiltersChange }: CounselorSearchProp
             onValueChange={(value) => handleFilterChange("specialization", value)}
           >
             <SelectTrigger className="bg-background/50 border-border/50">
-              <SelectValue placeholder="Specialization" />
+              <SelectValue placeholder={t('counselors.filters.specialization')} />
             </SelectTrigger>
             <SelectContent className="bg-gray-50 ">
               {specializations.map((spec) => (
@@ -139,7 +141,7 @@ export default function CounselorSearch({ onFiltersChange }: CounselorSearchProp
             onValueChange={(value) => handleFilterChange("language", value)}
           >
             <SelectTrigger className="bg-background/50 border-border/50">
-              <SelectValue placeholder="Language" />
+              <SelectValue placeholder={t('counselors.filters.language')} />
             </SelectTrigger>
             <SelectContent className="bg-gray-50 ">
               {languages.map((lang) => (
@@ -155,7 +157,7 @@ export default function CounselorSearch({ onFiltersChange }: CounselorSearchProp
       <div className="space-y-4">
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <Label className="text-sm font-medium">Price Range (per hour)</Label>
+            <Label className="text-sm font-medium">{t('counselors.filters.maxPrice')}</Label>
             <span className="text-sm font-medium text-primary">${filters.maxPrice}</span>
           </div>
           <div className="pt-2">
@@ -175,8 +177,8 @@ export default function CounselorSearch({ onFiltersChange }: CounselorSearchProp
 
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <Label className="text-sm font-medium">Experience (years)</Label>
-            <span className="text-sm font-medium text-primary">{filters.minExperience}+ years</span>
+            <Label className="text-sm font-medium">{t('counselors.filters.experience')}</Label>
+            <span className="text-sm font-medium text-primary">{filters.minExperience}+ {t('counselors.card.yearsExp')}</span>
           </div>
           <div className="pt-2">
             <Slider
@@ -198,8 +200,8 @@ export default function CounselorSearch({ onFiltersChange }: CounselorSearchProp
         className="w-full bg-gradient-primary hover:opacity-90 text-white cursor-pointer"
         onClick={handleApplyFilters}
       >
-        <Sparkles className="h-4 w-4 mr-2" />
-        Apply Filters
+        <Search className="h-4 w-4 mr-2" />
+        {t('counselors.filters.search')}
       </Button>
     </motion.div>
   );

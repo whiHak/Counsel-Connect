@@ -244,7 +244,7 @@ export function CounselorApplicationForm({isPending, setIsPending}: {isPending: 
   return (
     <div className="max-w-[1440px] mx-auto px-4 py-8 space-y-8 bg-gradient-to-br from-white/80 via-white/70 to-white/60 backdrop-blur-sm rounded-xl shadow-xl border border-white/20">
       {/* Progress Steps */}
-      <nav aria-label="Progress" className="mb-12">
+      <nav aria-label="Progress" className="mb-12 hidden md:block">
         <ol role="list" className="flex items-center justify-between">
           {steps.map((step, index) => (
             <li key={step.id} className={`relative ${index !== steps.length - 1 ? 'flex-1' : ''}`}>

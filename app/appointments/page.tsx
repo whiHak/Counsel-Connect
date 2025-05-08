@@ -10,6 +10,7 @@ import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Booking {
   _id: string;
@@ -32,6 +33,7 @@ export default function AppointmentsPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -161,7 +163,7 @@ export default function AppointmentsPage() {
             </Avatar>
             <div>
               <h3 className="font-semibold text-lg">
-                {booking.counselorId.personalInfo.fullName}
+                {t('appointments.card.with')} {booking.counselorId.personalInfo.fullName}
               </h3>
               <div className="flex items-center space-x-2 text-sm text-gray-600 mt-1">
                 <Calendar className="w-4 h-4" />
@@ -178,7 +180,7 @@ export default function AppointmentsPage() {
               className={`${getStatusColor(booking.status)} capitalize`}
               variant="secondary"
             >
-              {booking.status}
+              {t(`appointments.card.status.${booking.status}`)}
             </Badge>
             <div className="flex items-center space-x-1">
               {booking.sessionType === "video" ? (
@@ -196,16 +198,14 @@ export default function AppointmentsPage() {
               variant="outline"
               onClick={() => router.push(`/chat/${booking.counselorId._id}`)}
             >
-              Message
+              {t('appointments.card.actions.message')}
             </Button>
-            {booking.sessionType === "video" && (
-              <Button
-                className="bg-gradient-primary text-white"
-                onClick={() => router.push(`/video/${booking._id}`)}
-              >
-                Join Session
-              </Button>
-            )}
+            <Button
+              variant="default"
+              onClick={() => router.push(`/video/${booking.counselorId._id}`)}
+            >
+              {t('appointments.card.actions.join')}
+            </Button>
           </div>
         )}
       </CardContent>
@@ -214,40 +214,42 @@ export default function AppointmentsPage() {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6">My Appointments</h1>
+      <h1 className="text-3xl font-bold mb-6">{t('appointments.title')}</h1>
       <Tabs defaultValue="upcoming" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
-          <TabsTrigger value="upcoming">
-            Upcoming ({upcomingBookings.length})
-          </TabsTrigger>
-          <TabsTrigger value="past">Past ({pastBookings.length})</TabsTrigger>
+        <TabsList>
+          <TabsTrigger value="upcoming">{t('appointments.upcoming')}({(upcomingBookings.length)})</TabsTrigger>
+          <TabsTrigger value="past">{t('appointments.past') }({(pastBookings.length)})</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="upcoming" className="space-y-4">
-          {upcomingBookings.length === 0 ? (
+        <TabsContent value="upcoming">
+          {upcomingBookings.length > 0 ? (
+            <div className="space-y-4">
+              {upcomingBookings.map((booking) => (
+                <AppointmentCard key={booking._id} booking={booking} />
+              ))}
+            </div>
+          ) : (
             <Card>
               <CardContent className="p-6 text-center text-gray-500">
-                <p>No upcoming appointments</p>
+                {t('appointments.noUpcoming')}
               </CardContent>
             </Card>
-          ) : (
-            upcomingBookings.map((booking) => (
-              <AppointmentCard key={booking._id} booking={booking} />
-            ))
           )}
         </TabsContent>
 
-        <TabsContent value="past" className="space-y-4">
-          {pastBookings.length === 0 ? (
+        <TabsContent value="past">
+          {pastBookings.length > 0 ? (
+            <div className="space-y-4">
+              {pastBookings.map((booking) => (
+                <AppointmentCard key={booking._id} booking={booking} />
+              ))}
+            </div>
+          ) : (
             <Card>
               <CardContent className="p-6 text-center text-gray-500">
-                <p>No past appointments</p>
+                {t('appointments.noPast')}
               </CardContent>
             </Card>
-          ) : (
-            pastBookings.map((booking) => (
-              <AppointmentCard key={booking._id} booking={booking} />
-            ))
           )}
         </TabsContent>
       </Tabs>

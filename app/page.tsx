@@ -5,37 +5,26 @@ import { ArrowRight, MessageSquare, Calendar, Shield, Users, Sparkles, Check } f
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useEffect, useState } from "react";
 
 const features = [
   {
     icon: <MessageSquare className="h-6 w-6" />,
-    title: "Secure Messaging",
-    description: "Private, encrypted conversations with your counselor",
+    key: "secureMessaging",
   },
   {
     icon: <Calendar className="h-6 w-6" />,
-    title: "Flexible Scheduling",
-    description: "Book sessions that fit your schedule",
+    key: "flexibleScheduling",
   },
   {
     icon: <Shield className="h-6 w-6" />,
-    title: "Complete Privacy",
-    description: "Your data and conversations are fully protected",
+    key: "completePrivacy",
   },
   {
     icon: <Users className="h-6 w-6" />,
-    title: "Expert Counselors",
-    description: "Connect with qualified and experienced professionals",
+    key: "expertCounselors",
   },
-];
-
-const benefits = [
-  "Access to licensed professionals",
-  "Convenient online sessions",
-  "Personalized treatment plans",
-  "Flexible scheduling options",
-  "Secure & private platform",
-  "Continuous support between sessions",
 ];
 
 const fadeIn = {
@@ -58,6 +47,16 @@ const staggerContainer = {
 };
 
 export default function Home() {
+  const { t } = useLanguage();
+  const benefits = t('benefits.items');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (Array.isArray(benefits)) {
+      setIsLoading(false);
+    }
+  }, [benefits]);
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
@@ -98,25 +97,22 @@ export default function Home() {
             >
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-muted px-4 py-2 text-sm font-medium bg-background/50 backdrop-blur-sm">
                 <Sparkles className="h-4 w-4 text-primary" />
-                <span>Helping you find peace and clarity</span>
+                <span>{t('hero.tagline')}</span>
               </div>
               <h1 className="text-4xl lg:text-6xl font-bold leading-tight mb-6">
-                Your Journey to{" "}
-                <span className="inset-0 bg-[linear-gradient(to_right,#7C3AED,#2563EB)] bg-clip-text text-transparent">Mental Wellness</span>{" "}
-                Starts Here
+                <span className="inset-0 bg-[linear-gradient(to_right,#7C3AED,#2563EB)] bg-clip-text text-transparent">{t('hero.title')}</span>
               </h1>
               <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto lg:mx-0">
-                Connect with professional counselors in a safe, private environment.
-                Get the support you need, when you need it.
+                {t('hero.subtitle')}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Button size="lg" className="bg-gradient-primary hover:opacity-90 text-white" asChild>
                   <Link href="/counselors" className="z-10">
-                    Find a Counselor <ArrowRight className="ml-2 h-5 w-5" />
+                    {t('hero.findCounselor')} <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
                 <Button size="lg" variant="outline" className="border-primary/20 text-foreground hover:bg-accent/50 z-10" asChild>
-                  <Link href="/how-it-works">Learn More</Link>
+                  <Link href="/how-it-works">{t('hero.learnMore')}</Link>
                 </Button>
               </div>
             </motion.div>
@@ -128,7 +124,7 @@ export default function Home() {
             >
               <div className="relative w-full max-w-2xl mx-auto">
                 <div className="aspect-video relative rounded-xl overflow-hidden shadow-2xl border border-muted/20">
-        <Image
+                  <Image
                     src="https://images.unsplash.com/photo-1573497019418-b400bb3ab074?q=80&w=2000&auto=format&fit=crop"
                     alt="Online counseling session"
                     layout="fill"
@@ -165,9 +161,9 @@ export default function Home() {
             className="max-w-2xl mx-auto text-center mb-16"
           >
             <h2 className="text-3xl font-bold mb-4">
-              Why People Choose <span className="inset-0 bg-[linear-gradient(to_right,#7C3AED,#2563EB)] bg-clip-text text-transparent">CounselConnect</span>
+              <span className="inset-0 bg-[linear-gradient(to_right,#7C3AED,#2563EB)] bg-clip-text text-transparent">{t('benefits.title')}</span>
             </h2>
-            <p className="text-muted-foreground">Experience the benefits of our modern approach to online counseling</p>
+            <p className="text-muted-foreground">{t('benefits.subtitle')}</p>
           </motion.div>
           
           <motion.div 
@@ -177,18 +173,32 @@ export default function Home() {
             variants={staggerContainer}
             className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto"
           >
-            {benefits.map((benefit, index) => (
-              <motion.div 
-                key={index} 
-                variants={fadeIn}
-                className="flex items-center gap-3 p-4 rounded-lg bg-background/80 backdrop-blur-sm border border-muted/30 hover:shadow-lg transition-all duration-300 glass"
-              >
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center">
-                  <Check className="h-4 w-4 text-white" />
-                </div>
-                <p className="font-medium">{benefit}</p>
-              </motion.div>
-            ))}
+            {isLoading ? (
+              // Loading skeleton
+              [...Array(6)].map((_, index) => (
+                <motion.div 
+                  key={index}
+                  variants={fadeIn}
+                  className="flex items-center gap-3 p-4 rounded-lg bg-background/80 backdrop-blur-sm border border-muted/30"
+                >
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10"></div>
+                  <div className="h-4 bg-primary/10 rounded w-3/4"></div>
+                </motion.div>
+              ))
+            ) : Array.isArray(benefits) ? (
+              benefits.map((benefit: string, index: number) => (
+                <motion.div 
+                  key={index} 
+                  variants={fadeIn}
+                  className="flex items-center gap-3 p-4 rounded-lg bg-background/80 backdrop-blur-sm border border-muted/30 hover:shadow-lg transition-all duration-300 glass"
+                >
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center">
+                    <Check className="h-4 w-4 text-white" />
+                  </div>
+                  <p className="font-medium">{benefit}</p>
+                </motion.div>
+              ))
+            ) : null}
           </motion.div>
         </div>
       </section>
@@ -204,10 +214,10 @@ export default function Home() {
             variants={fadeIn}
           >
             <h2 className="text-3xl font-bold mb-4">
-              How <span className="inset-0 bg-[linear-gradient(to_right,#7C3AED,#2563EB)] bg-clip-text text-transparent">CounselConnect</span> Works
+              <span className="inset-0 bg-[linear-gradient(to_right,#7C3AED,#2563EB)] bg-clip-text text-transparent">{t('features.title')}</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              We provide a comprehensive platform for your mental health journey
+              {t('features.subtitle')}
             </p>
           </motion.div>
           
@@ -218,17 +228,17 @@ export default function Home() {
             variants={staggerContainer}
             className="grid md:grid-cols-2 lg:grid-cols-4 gap-8"
           >
-            {features.map((feature, index) => (
+            {features.map((feature) => (
               <motion.div
-                key={feature.title}
+                key={feature.key}
                 variants={fadeIn}
                 className="group bg-background p-6 rounded-xl shadow-sm border border-muted/30 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
               >
                 <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                   <div className="text-white">{feature.icon}</div>
                 </div>
-                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                <p className="text-muted-foreground">{feature.description}</p>
+                <h3 className="text-xl font-semibold mb-2">{t(`features.items.${feature.key}.title`)}</h3>
+                <p className="text-muted-foreground">{t(`features.items.${feature.key}.description`)}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -246,7 +256,7 @@ export default function Home() {
             variants={fadeIn}
           >
             <div className="absolute inset-0">
-          <Image
+              <Image
                 src="https://images.unsplash.com/photo-1573497019418-b400bb3ab074?q=80&w=2000&auto=format&fit=crop"
                 alt="Counseling background"
                 layout="fill"
@@ -258,14 +268,13 @@ export default function Home() {
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px)] bg-[size:40px] bg-[linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:40px]" />
             <div className="relative p-12 text-center">
               <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
-                Ready to Start Your Journey?
+                {t('cta.title')}
               </h2>
               <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-                Take the first step towards better mental health. Our counselors are
-                here to support you.
+                {t('cta.subtitle')}
               </p>
               <Button size="lg" className="bg-white text-primary hover:bg-white/90 hover:scale-105 transition-transform duration-300" asChild>
-                <Link href="/counselors">Find Your Counselor Today</Link>
+                <Link href="/counselors">{t('cta.button')}</Link>
               </Button>
             </div>
           </motion.div>

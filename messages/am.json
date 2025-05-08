@@ -1,0 +1,196 @@
+{
+  "hero": {
+    "tagline": "ሰላምና ግልጽነትን እንዲያገኙ እንረዳዎታለን",
+    "title": "የአእምሮ ጤንነትዎ ጉዞ እዚህ ይጀምራል",
+    "subtitle": "ከሙያዊ አማካሪዎች ጋር በአስተማማኝ እና ግላዊ አካባቢ ይገናኙ። የሚፈልጉትን ድጋፍ በሚፈልጉት ጊዜ ያግኙ።",
+    "findCounselor": "አማካሪ ይፈልጉ",
+    "learnMore": "ተጨማሪ ይወቁ"
+  },
+  "nav": {
+    "findCounselors": "አማካሪዎችን ይፈልጉ",
+    "howItWorks": "እንዴት እንደሚሰራ",
+    "messages": "መልእክቶች",
+    "appointments": "ቀጠሮዎቼ",
+    "becomeCounselor": "አማካሪ ይሁኑ",
+    "dashboard": "ዳሽቦርድ",
+    "profile": "መገለጫ",
+    "favorites": "ተወዳጆች",
+    "settings": "ቅንብሮች",
+    "signIn": "ይግቡ",
+    "signOut": "ይውጡ",
+    "getStarted": "ይጀምሩ"
+  },
+  "appointments": {
+    "title": "ቀጠሮዎቼ",
+    "upcoming": "የሚመጡ ክፍለ ጊዜዎች",
+    "past": "ያለፉ ክፍለ ጊዜዎች",
+    "noUpcoming": "ምንም የሚመጡ ቀጠሮዎች የሉም",
+    "noPast": "ምንም ያለፉ ቀጠሮዎች የሉም",
+    "schedule": "አዲስ ክፍለ ጊዜ ያዝ",
+    "card": {
+      "with": "ከ",
+      "date": "ቀን",
+      "time": "ሰዓት",
+      "duration": "የጊዜ ርዝመት",
+      "status": {
+        "scheduled": "የተረጋገጠ",
+        "pending": "በመጠባበቅ ላይ",
+        "cancelled": "የተሰረዘ",
+        "completed": "የተጠናቀቀ"
+      },
+      "actions": {
+        "reschedule": "እንደገና ያዝ",
+        "cancel": "ሰርዝ",
+        "join": "ክፍለ ጊዜውን ይቀላቀሉ",
+        "review": "ግምገማ ይስጡ"
+      }
+    },
+    "filters": {
+      "all": "ሁሉም ክፍለ ጊዜዎች",
+      "confirmed": "የተረጋገጡ",
+      "pending": "በመጠባበቅ ላይ",
+      "cancelled": "የተሰረዙ",
+      "completed": "የተጠናቀቁ"
+    },
+    "modal": {
+      "cancel": {
+        "title": "ቀጠሮ ሰርዝ",
+        "message": "እርግጠኛ ነዎት ይህን ቀጠሮ መሰረዝ ይፈልጋሉ?",
+        "reason": "የመሰረዣ ምክንያት",
+        "confirm": "አዎ፣ ሰርዝ",
+        "back": "ተመለስ"
+      },
+      "reschedule": {
+        "title": "ቀጠሮ እንደገና ያዝ",
+        "message": "አዲስ ቀን እና ሰዓት ይምረጡ",
+        "confirm": "አዲስ ሰዓት አረጋግጥ",
+        "back": "ተመለስ"
+      }
+    }
+  },
+  "counselors": {
+    "title": "የእርስዎን አማካሪ ያግኙ",
+    "searchResults": "የፍለጋ ውጤቶች",
+    "filters": {
+      "search": "አማካሪዎችን ይፈልጉ...",
+      "specialization": "ስፔሻላይዜሽን",
+      "language": "ቋንቋ",
+      "maxPrice": "ከፍተኛ ዋጋ",
+      "experience": "የልምድ ዓመታት",
+      "reset": "ማጣሪያዎችን ያጥፉ"
+    },
+    "recommended": {
+      "title": "ለእርስዎ የሚመከሩ",
+      "loading": "ምክሮችን በመጫን ላይ..."
+    },
+    "noResults": {
+      "title": "ምንም አማካሪዎች አልተገኙም",
+      "description": "መስፈርትዎን የሚያሟሉ አማካሪዎችን ማግኘት አልቻልንም። እባክዎ ማጣሪያዎችዎን ያስተካክሉ።",
+      "reset": "ማጣሪያዎችን ያጥፉ"
+    },
+    "card": {
+      "viewProfile": "መገለጫ ይመልከቱ",
+      "yearsExp": "ዓመታት ልምድ",
+      "perHour": "/በሰዓት",
+      "languages": "ቋንቋዎች",
+      "specializations": "ስፔሻላይዜሽኖች",
+      "matchScore": "የመመሳሰል ደረጃ"
+    }
+  },
+  "becomeCounselor": {
+    "title": "አማካሪ ይሁኑ",
+    "subtitle": "እንደ የአእምሮ ጤና ባለሙያ ከመድረካችን ጋር ይቀላቀሉ እና በሰዎች ሕይወት ላይ ለውጥ ያምጡ።",
+    "form": {
+      "personalInfo": {
+        "title": "የግል መረጃ",
+        "firstName": "የመጀመሪያ ስም",
+        "lastName": "የአባት ስም",
+        "email": "ኢሜይል",
+        "phone": "ስልክ ቁጥር",
+        "dob": "የትውልድ ቀን",
+        "address": "አድራሻ"
+      },
+      "professionalInfo": {
+        "title": "የሙያ መረጃ",
+        "specialization": "ስፔሻላይዜሽን",
+        "experience": "የልምድ ዓመታት",
+        "license": "የፈቃድ ቁጥር",
+        "languages": "ቋንቋዎች",
+        "rate": "የሰዓት ክፍያ",
+        "bio": "የሙያ ባዮግራፊ"
+      },
+      "documents": {
+        "title": "የሚጠየቁ ሰነዶች",
+        "license": "የሙያ ፈቃድ",
+        "education": "የትምህርት ማስረጃዎች",
+        "id": "የመታወቂያ ካርድ",
+        "photo": "የሙያ ፎቶ",
+        "experience": "የስራ ልምድ",
+        "cv": "ሲቪ/ሪዚዩም"
+      },
+      "submit": "ማመልከቻ ያስገቡ",
+      "pending": "ማመልከቻ በግምገማ ላይ"
+    }
+  },
+  "howItWorks": {
+    "title": "እንዴት እንደሚሰራ",
+    "subtitle": "በቀላል ደረጃዎች የአእምሮ ጤና እንክብካቤ ያግኙ",
+    "steps": [
+      {
+        "title": "አማካሪ ይምረጡ",
+        "description": "ከተሞክሮዎ፣ ከስፔሻላይዜሽን እና ከቋንቋ አንጻር ለእርስዎ የሚስማማ አማካሪ ይፈልጉ።"
+      },
+      {
+        "title": "ቀጠሮ ይያዙ",
+        "description": "ለእርስዎ የሚመች ጊዜ ይምረጡ እና የመጀመሪያ ክፍለ ጊዜዎን ይያዙ።"
+      },
+      {
+        "title": "ይገናኙ",
+        "description": "በመስመር ላይ ከአማካሪዎ ጋር በደህንነቱ የተጠበቀ መንገድ ይገናኙ።"
+      },
+      {
+        "title": "ድጋፍ ያግኙ",
+        "description": "ቀጣይነት ያለው ድጋፍ እና መመሪያ ያግኙ በእርስዎ የግል ጉዞ።"
+      }
+    ]
+  },
+  "benefits": {
+    "title": "ሰዎች CounselConnect-ን የሚመርጡበት ምክንያት",
+    "subtitle": "የዘመናዊ የመስመር ላይ ምክር አገልግሎታችንን ጥቅሞች ይሞክሩ",
+    "items": [
+      "የተፈቀደላቸው ባለሙያዎችን ማግኘት",
+      "አመቺ የመስመር ላይ ክፍለ ጊዜዎች",
+      "የግል ሕክምና እቅዶች",
+      "ተለዋዋጭ የጊዜ ሰሌዳ አማራጮች",
+      "አስተማማኝ እና ግላዊ መድረክ",
+      "ከክፍለ ጊዜዎች መካከል ቀጣይነት ያለው ድጋፍ"
+    ]
+  },
+  "features": {
+    "title": "CounselConnect እንዴት እንደሚሰራ",
+    "subtitle": "ለእርስዎ የአእምሮ ጤና ጉዞ ሁሉን አቀፍ መድረክ እናቀርባለን",
+    "items": {
+      "secureMessaging": {
+        "title": "አስተማማኝ መልእክት መላላክ",
+        "description": "ከአማካሪዎ ጋር የተመሰጠረ የግል ውይይቶች"
+      },
+      "flexibleScheduling": {
+        "title": "ተለዋዋጭ የጊዜ ቀጠሮ",
+        "description": "ለእርስዎ የሚስማማ ክፍለ ጊዜ ይያዙ"
+      },
+      "completePrivacy": {
+        "title": "ሙሉ ግላዊነት",
+        "description": "የእርስዎ መረጃ እና ውይይቶች ሙሉ በሙሉ የተጠበቁ ናቸው"
+      },
+      "expertCounselors": {
+        "title": "ባለሙያ አማካሪዎች",
+        "description": "ከብቁ እና ልምድ ካላቸው ባለሙያዎች ጋር ይገናኙ"
+      }
+    }
+  },
+  "cta": {
+    "title": "ጉዞዎን ለመጀመር ዝግጁ ነዎት?",
+    "subtitle": "ለተሻለ የአእምሮ ጤና የመጀመሪያውን እርምጃ ይውሰዱ። አማካሪዎቻችን እርስዎን ለመደገፍ እዚህ አሉ።",
+    "button": "የእርስዎን አማካሪ ዛሬ ያግኙ"
+  }
+} 

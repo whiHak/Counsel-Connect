@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Star, ThumbsUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Counselor {
   _id: string;
@@ -32,6 +33,7 @@ export default function RecommendedCounselors() {
   const [counselors, setCounselors] = useState<Counselor[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const fetchRecommendedCounselors = async () => {
@@ -57,7 +59,7 @@ export default function RecommendedCounselors() {
   if (loading) {
     return (
       <div className="space-y-4">
-        <h2 className="text-2xl font-semibold">Recommended for You</h2>
+        <h2 className="text-2xl font-semibold">{t('counselors.recommended.title')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
             <Card key={i} className="p-4 animate-pulse">
@@ -83,9 +85,9 @@ export default function RecommendedCounselors() {
     <div className="space-y-4 mb-8">
       <div className="flex items-center gap-2">
         <ThumbsUp className="w-5 h-5 text-indigo-500" />
-        <h2 className="text-2xl font-semibold">Recommended for You</h2>
+        <h2 className="text-2xl font-semibold">{t('counselors.recommended.title')}</h2>
       </div>
-      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 w-full">
         {counselors.map((counselor) => (
           <Card
             key={counselor._id}
@@ -103,13 +105,13 @@ export default function RecommendedCounselors() {
                 <div>
                   <h3 className="font-semibold">{counselor.personalInfo.fullName}</h3>
                   <p className="text-sm text-muted-foreground">
-                    {counselor.professionalInfo.yearsOfExperience} years experience
+                    {counselor.professionalInfo.yearsOfExperience} {t('counselors.card.yearsExp')}
                   </p>
                 </div>
                 <div className="flex items-center gap-1">
                   <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
                   <span className="text-sm font-medium">
-                    Match Score: {counselor.matchScore}%
+                    {t('counselors.card.matchScore')}: {counselor.matchScore}%
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-1">
@@ -125,7 +127,7 @@ export default function RecommendedCounselors() {
                 </div>
                 <div className="flex items-center justify-between mt-2">
                   <span className="text-sm font-semibold text-green-600">
-                    ${counselor.workPreferences.hourlyRate}/hr
+                    ${counselor.workPreferences.hourlyRate}{t('counselors.card.perHour')}
                   </span>
                   <Button
                     size="sm"
@@ -135,7 +137,7 @@ export default function RecommendedCounselors() {
                       router.push(`/counselors/${counselor._id}`);
                     }}
                   >
-                    Book Now
+                    {t('counselors.card.viewProfile')}
                   </Button>
                 </div>
               </div>
