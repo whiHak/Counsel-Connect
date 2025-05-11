@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { Button } from "../ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Menu,
   User,
@@ -31,6 +32,7 @@ export function Navbar() {
   const { data: session } = useSession();
   const [scrolled, setScrolled] = useState(false);
   const { t } = useLanguage();
+  const { toast } = useToast();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -70,7 +72,18 @@ export function Navbar() {
             </Link>
 
             <div className="hidden md:flex items-center space-x-4">
-              <Link href="/counselors">
+              <Link href="/counselors" onClick={(e) => {
+                if (!session) {
+                  e.preventDefault();
+                  toast({
+                    title: "Please login first",
+                    description: "You need to be logged in to access this page",
+                    variant: "destructive",
+                    style:{backgroundColor: "#f8d7da", color: "#721c24"},
+                  });
+                  signIn("google");
+                }
+              }}>
                 <Button
                   variant="ghost"
                   className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
@@ -232,14 +245,41 @@ export function Navbar() {
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <div className="flex items-center space-x-3">
-                  <Button
-                    variant="ghost"
-                    onClick={() => signIn("google")}
-                    className="text-muted-foreground hover:text-primary hover:bg-primary/10 bg-transparent transition-colors cursor-pointer hidden md:block"
-                  >
-                    {t('nav.signIn')}
-                  </Button>
+                <div className="flex items-center space-x-3 ">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        className="text-muted-foreground hover:text-primary hover:bg-primary/10 bg-transparent transition-colors cursor-pointer"
+                      >
+                        {t('nav.signIn')}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56 p-2">
+                      <DropdownMenuItem onClick={() => signIn("google")} className="cursor-pointer">
+                        <div className="relative w-5 h-5 mr-2">
+                          <Image 
+                            src="/google.svg" 
+                            alt="Google" 
+                            fill
+                            className="object-contain"
+                          />
+                        </div>
+                        Sign in with Google
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => signIn("facebook")} className="cursor-pointer">
+                        <div className="relative w-5 h-5 mr-2">
+                          <Image 
+                            src="/facebook.png" 
+                            alt="Facebook" 
+                            fill
+                            className="object-contain"
+                          />
+                        </div>
+                        Sign in with Facebook
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                   <Button
                     onClick={() => signIn("google")}
                     className="bg-[linear-gradient(to_right,#7C3AED,#2563EB)] hover:opacity-90 text-white gap-2 shadow-lg shadow-primary/25 cursor-pointer"

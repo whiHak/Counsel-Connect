@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 
 // List of public routes that don't require authentication
-const publicRoutes = ['/', '/counselors', '/how-it-works']
+const publicRoutes = ['/', '/how-it-works']
 
 export async function middleware(request: NextRequest) {
   // Get the pathname from the URL
@@ -22,6 +22,18 @@ export async function middleware(request: NextRequest) {
     req: request,
     secret: process.env.NEXTAUTH_SECRET
   })
+
+  // Special handling for /counselors route
+  if (path === '/counselors') {
+    if (!token) {
+      return NextResponse.redirect(new URL('/', request.url))
+    }
+    
+    // If user is logged in but profile is not complete, redirect to complete profile
+    if (!token.isProfileComplete) {
+      return NextResponse.redirect(new URL('/profile/complete', request.url))
+    }
+  }
 
   // If not a public route and no session exists, redirect to home page
   if (!token) {

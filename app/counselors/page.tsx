@@ -30,7 +30,7 @@ export default function CounselorsPage() {
     <div className="container mx-auto px-4 py-4">
       <h1 className="text-3xl font-bold mb-8">{t('counselors.title')}</h1>
       
-      <div className="grid lg:grid-cols-[400px_1fr] gap-8">
+      <div className="grid xl:grid-cols-[380px_1fr] [@media(min-width:1536px)]:grid-cols-[400px_1fr] gap-8">
         <aside className="space-y-6">
           <CounselorSearch onFiltersChange={setFilters} />
         </aside>

@@ -205,7 +205,7 @@ export default function CounselorList({ filters }: CounselorListProps) {
   return (
     <div className="space-y-6">
       <motion.div 
-        className="grid gap-6 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 w-full"
+        className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 w-full"
         variants={staggerContainer}
         initial="hidden"
         animate="visible"
@@ -218,22 +218,22 @@ export default function CounselorList({ filters }: CounselorListProps) {
           >
             <Card className="group flex flex-col h-full border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-primary/20">
               <CardHeader className="flex-row gap-4 items-center pb-2">
-                <Avatar className="h-16 w-16 border-2 border-primary/20 ring-2 ring-background">
+                <Avatar className="h-14 w-14 border-2 border-primary/20 ring-2 ring-background">
                   <AvatarImage src={counselor.imageUrl} alt={counselor.personalInfo.fullName}  className="object-cover"/>
-                  <AvatarFallback className="bg-primary/10 text-primary">
+                  <AvatarFallback className="bg-primary/10 text-xl">
                     {counselor.personalInfo.fullName.split(" ").map(n => n[0]).join("")}
                   </AvatarFallback>
                 </Avatar>
                 <div className="space-y-1">
-                  <h3 className="text-lg font-semibold group-hover:text-primary transition-colors">
+                  <h3 className="font-semibold group-hover:text-primary transition-colors">
                     {counselor.personalInfo.fullName}
                   </h3>
                   <div className="flex items-center gap-2 text-sm">
-                    <div className="flex items-center text-primary">
+                    {/* <div className="flex items-center text-primary">
                       <Star className="h-4 w-4 fill-primary text-primary mr-1" />
                       <span className="font-medium">{(counselor.reviews[0]?.rating)?.toString()||0}</span>
-                    </div>
-                    <span className="text-muted-foreground">•</span>
+                    </div> */}
+                    {/* <span className="text-muted-foreground">•</span> */}
                     <span className="text-muted-foreground flex items-center gap-1">
                       <MapPin className="h-3 w-3" />
                       {Number(counselor.professionalInfo.yearsOfExperience)} years exp.
@@ -242,12 +242,12 @@ export default function CounselorList({ filters }: CounselorListProps) {
                 </div>
               </CardHeader>
               <CardContent className="flex-1 space-y-4 py-4">
-                <div className="flex flex-wrap gap-1.5">
-                  {counselor.professionalInfo.specializations.map((spec) => (
-                    <Badge 
-                      key={spec} 
-                      variant="secondary" 
-                      className="bg-secondary/10 text-secondary-foreground/80 hover:bg-secondary/20 transition-colors"
+              <div className="flex flex-wrap gap-1">
+                  {counselor.professionalInfo.specializations.slice(0, 2).map((spec) => (
+                    <Badge
+                      key={spec}
+                      variant="secondary"
+                      className="bg-indigo-50 text-indigo-700 hover:bg-indigo-100"
                     >
                       {spec}
                     </Badge>
@@ -262,7 +262,7 @@ export default function CounselorList({ filters }: CounselorListProps) {
                     No availability found
                   </div>
                 )}
-                <div className="flex items-center justify-between pt-2">
+                <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Globe2 className="h-4 w-4 text-primary/70" />
                     <span className="text-sm text-muted-foreground">

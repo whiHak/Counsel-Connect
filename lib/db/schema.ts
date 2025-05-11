@@ -39,7 +39,8 @@ const clientProfileSchema = new mongoose.Schema({
       name: String,
       relationship: String,
       phoneNumber: String
-    }
+    },
+    nationalIdUrl: { type: String, required: true }
   },
   preferences: {
     preferredLanguages: [String],

@@ -22,11 +22,11 @@ export function LanguageSwitcher() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="w-9 px-0">
-          <Globe className="h-4 w-4" />
+          <Globe className="h-4 w-4 cursor-pointer" />
           <span className="sr-only">Switch language</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end"className="bg-background/80 backdrop-blur-xl border-b border-border/50 shadow-sm">
         {languages.map((lang) => (
           <DropdownMenuItem
             key={lang.code}

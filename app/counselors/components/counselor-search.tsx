@@ -91,13 +91,13 @@ export default function CounselorSearch({ onFiltersChange }: CounselorSearchProp
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Filter className="h-5 w-5 text-primary" />
-          <h2 className="text-lg font-semibold">{t('counselors.title')}</h2>
+          <h2 className="text-lg font-semibold">{t('counselors.filters.title')}</h2>
         </div>
         <Button 
           variant="ghost" 
           size="sm" 
           onClick={handleClearFilters}
-          className="text-muted-foreground hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground cursor-pointer"
         >
           <X className="h-4 w-4 mr-2" />
           {t('counselors.filters.reset')}

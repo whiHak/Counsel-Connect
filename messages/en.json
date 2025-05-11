@@ -72,6 +72,7 @@
     "title": "Find Your Counselor",
     "searchResults": "Search Results",
     "filters": {
+      "title": "Filters & Preferences",
       "search": "Search counselors...",
       "specialization": "Specialization",
       "language": "Language",

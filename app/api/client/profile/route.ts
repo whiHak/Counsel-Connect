@@ -27,7 +27,8 @@ export async function POST(request: NextRequest) {
           address: data.address,
           dateOfBirth: new Date(data.dateOfBirth),
           gender: data.gender,
-          emergencyContact: data.emergencyContact
+          emergencyContact: data.emergencyContact,
+          nationalIdUrl: data.nationalIdUrl
         },
         preferences: {
           preferredLanguages: data.preferredLanguages,

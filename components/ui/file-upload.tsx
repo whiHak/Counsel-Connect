@@ -50,6 +50,7 @@ export const FileUpload = ({
                 title: "File uploaded successfully",
                 description: "Your file has been uploaded.",
                 variant: "default",
+                style:{backgroundColor: "green", color: "white"},
               });
             }
           }}

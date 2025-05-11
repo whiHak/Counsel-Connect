@@ -25,12 +25,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import { FileUpload } from "@/components/ui/file-upload";
 
 const formSchema = z.object({
   phoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
   address: z.string().min(1, "Address is required"),
   dateOfBirth: z.string().min(1, "Date of birth is required"),
   gender: z.enum(["Male", "Female", "Other"]),
+  nationalIdUrl: z.string().min(1, "National ID document is required"),
   emergencyContact: z.object({
     name: z.string().min(1, "Emergency contact name is required"),
     relationship: z.string().min(1, "Relationship is required"),
@@ -80,6 +82,7 @@ export default function ProfileCompletePage() {
       address: "",
       dateOfBirth: "",
       gender: "Male",
+      nationalIdUrl: "",
       emergencyContact: {
         name: "",
         relationship: "",
@@ -138,7 +141,7 @@ export default function ProfileCompletePage() {
   }
 
   return (
-    <div className="container px-[80px] mx-auto mb-10 max-w-4Ixl space-y-6">
+    <div className="container md:px-[80px] mx-auto mb-10 max-w-4Ixl space-y-6">
       <div className="mb-8 text-center">
         <h1 className="text-2xl font-bold">Complete Your Profile First</h1>
         <p className="text-muted-foreground">
@@ -161,7 +164,7 @@ export default function ProfileCompletePage() {
                     <FormControl>
                       <Input placeholder="Enter your phone number" {...field} />
                     </FormControl>
-                    <FormMessage className="text-red-300" />
+                    <FormMessage className="text-red-500" />
                   </FormItem>
                 )}
               />
@@ -215,7 +218,23 @@ export default function ProfileCompletePage() {
                   </FormItem>
                 )}
               />
+
             </div>
+              <FormField
+                control={form.control}
+                name="nationalIdUrl"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel>National ID Document</FormLabel>
+                    <FileUpload
+                      endpoint="clientDocument"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                    <FormMessage className="text-red-500" />
+                  </FormItem>
+                )}
+              />
           </div>
 
           {/* Emergency Contact */}

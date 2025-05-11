@@ -87,7 +87,7 @@ export default function RecommendedCounselors() {
         <ThumbsUp className="w-5 h-5 text-indigo-500" />
         <h2 className="text-2xl font-semibold">{t('counselors.recommended.title')}</h2>
       </div>
-      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 w-full">
+      <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 w-full">
         {counselors.map((counselor) => (
           <Card
             key={counselor._id}
@@ -131,7 +131,7 @@ export default function RecommendedCounselors() {
                   </span>
                   <Button
                     size="sm"
-                    className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:from-indigo-600 hover:to-purple-600"
+                    className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:from-indigo-600 hover:to-purple-600 hidden [@media(min-width:1536px)]:block"
                     onClick={(e) => {
                       e.stopPropagation();
                       router.push(`/counselors/${counselor._id}`);
