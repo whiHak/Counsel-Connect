@@ -160,6 +160,20 @@ const chatRoomSchema = new mongoose.Schema({
   lastMessageDate: {
     type: Date,
   },
+  activeMeeting: {
+    type: {
+      type: String,
+      enum: ['audio', 'video'],
+    },
+    meetingLink: String,
+    eventLink: String,
+    eventId: String,
+    createdAt: Date,
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
+    }
+  },
   createdAt: {
     type: Date,
     default: Date.now,

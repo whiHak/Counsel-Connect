@@ -180,7 +180,7 @@ export function Navbar() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     align="end"
-                    className="w-64 mt-2 rounded-xl border border-border/50 bg-card/95 backdrop-blur-xl p-2"
+                    className="w-64 mt-2 rounded-xl border border-border/50 bg-card/95 backdrop-blur-3xl p-2"
                   >
                     <div className="flex items-start gap-3 p-3">
                       <div className="relative h-10 w-10 rounded-full overflow-hidden border border-primary/20">

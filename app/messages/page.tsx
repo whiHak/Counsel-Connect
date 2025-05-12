@@ -171,13 +171,65 @@ export default function MessagesPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleCallFeature = (type: 'audio' | 'video') => {
-    toast({
-      title: "Coming Soon!",
-      description: `${type === 'audio' ? 'Audio' : 'Video'} calls will be available soon.`,
-      variant: "default",
-      className: "bg-gradient-to-r from-indigo-500 to-purple-500 text-white",
-    });
+  const handleCallFeature = async (type: 'audio' | 'video') => {
+    if (!selectedChat) return;
+
+    try {
+      const response = await fetch("/api/meetings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chatRoomId: selectedChat._id,
+          type
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        if (error.error === "Google Calendar not authorized") {
+          toast({
+            title: "Authorization Required",
+            description: "Please authorize Google Calendar access first",
+            variant: "destructive",
+          });
+          // Redirect to Google authorization
+          window.location.href = '/api/auth/google';
+          return;
+        }
+        throw new Error("Failed to create meeting");
+      }
+
+      const { meetingLink, eventLink } = await response.json();
+      
+      // Open meeting link in a new tab
+      window.open(meetingLink, '_blank');
+
+      // Send a system message about the meeting
+      const messageContent = `${session?.user?.name} started a ${type} call.\nJoin meeting: ${meetingLink}\nView calendar event: ${eventLink}`;
+      await fetch("/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content: messageContent,
+          receiverId: selectedChat.user._id,
+          chatRoomId: selectedChat._id
+        }),
+      });
+
+      toast({
+        title: "Meeting Created!",
+        description: `Your ${type} call has been scheduled and started. Check your calendar for details.`,
+        variant: "default",
+        className: "bg-gradient-to-r from-indigo-500 to-purple-500 text-white",
+      });
+    } catch (error) {
+      console.error("Error creating meeting:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create meeting. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -256,7 +308,7 @@ export default function MessagesPage() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="rounded-full hover:bg-indigo-50"
+                  className="rounded-full hover:bg-indigo-50 cursor-pointer"
                   onClick={() => handleCallFeature('audio')}
                 >
                   <Phone className="h-4 w-4 text-indigo-600" />
@@ -264,7 +316,7 @@ export default function MessagesPage() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="rounded-full hover:bg-purple-50"
+                  className="rounded-full hover:bg-purple-50 cursor-pointer"
                   onClick={() => handleCallFeature('video')}
                 >
                   <Video className="h-4 w-4 text-purple-600" />
