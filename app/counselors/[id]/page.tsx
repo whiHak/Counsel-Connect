@@ -69,6 +69,10 @@ export default function CounselorDetailPage() {
     const fetchCounselor = async () => {
       try {
         const response = await fetch(`/api/counselors/${params.id}`);
+        if (!response.ok) {
+          //router push back
+          router.back();
+        }
         const data = await response.json();
         setCounselor(data);
       } catch (error) {
@@ -320,7 +324,7 @@ export default function CounselorDetailPage() {
                     <SelectValue placeholder="Select a time slot" />
                   </SelectTrigger>
                   <SelectContent className="bg-gray-50">
-                    {(() => {
+                    {selectedDate && (() => {
                       const availableDay = counselor.workPreferences.availability
                         .find(
                           (a) =>
