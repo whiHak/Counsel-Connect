@@ -324,4 +324,4 @@ export const Message = mongoose.models.Message || mongoose.model('Message', mess
 export const Booking = mongoose.models.Booking || mongoose.model('Booking', bookingSchema);
 export const ChatRoom = mongoose.models.ChatRoom || mongoose.model('ChatRoom', chatRoomSchema);
 export const CounselorApplication = mongoose.models.CounselorApplication || mongoose.model('CounselorApplication', counselorApplicationSchema);
-export const Appointment = mongoose.models.Appointment || mongoose.model('Appointment', AppointmentSchema); 
+export const Appointment = mongoose.models.Appointment || mongoose.model('Appointment', AppointmentSchema);

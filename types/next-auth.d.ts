@@ -9,6 +9,7 @@ declare module 'next-auth' {
       image: string;
       role: 'CLIENT' | 'COUNSELOR';
       isProfileComplete: boolean;
+      googleRefreshToken?: string;
     } & DefaultSession['user'];
   }
 
@@ -27,5 +28,6 @@ declare module 'next-auth/jwt' {
     id: string;
     role: 'CLIENT' | 'COUNSELOR';
     isProfileComplete: boolean;
+    googleRefreshToken?: string;
   }
 } 

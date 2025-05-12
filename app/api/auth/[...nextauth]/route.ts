@@ -5,6 +5,7 @@ import GithubProvider from 'next-auth/providers/github';
 import { User } from '@/lib/db/schema';
 import connectDB from '@/lib/db/connect';
 import { NextAuthOptions } from "next-auth";
+import { storeUserRefreshToken } from "@/lib/google/calendar";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -13,7 +14,11 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       authorization: {
         params: {
-          scope: "openid email profile https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar"
+          prompt: "consent",
+          access_type: "offline",
+          scope: "openid email profile https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar",
+          response: "code",
+          state: "calendar_auth"
         }
       }
     }),
@@ -73,6 +78,7 @@ export const authOptions: NextAuthOptions = {
           user.role = existingUser.role;
           user.isProfileComplete = existingUser.isProfileComplete;
         }
+
         return true;
       } catch (error) {
         console.error("SignIn error:", error);
@@ -84,8 +90,11 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.role = user.role;
         token.isProfileComplete = user.isProfileComplete;
+        // Store refresh token if available from Google OAuth
+        if (account?.provider === 'google' && account?.refresh_token) {
+          token.googleRefreshToken = account.refresh_token;
+        }
       } else if (trigger === "update" && session) {
-        // Handle session updates if needed
         token.role = session.user.role;
         token.isProfileComplete = session.user.isProfileComplete;
       }
@@ -96,6 +105,8 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
         session.user.isProfileComplete = token.isProfileComplete as boolean;
+        // Add refresh token to session if available
+        session.user.googleRefreshToken = token.googleRefreshToken;
       }
       return session;
     }
@@ -105,7 +116,7 @@ export const authOptions: NextAuthOptions = {
     error: '/auth/error',
   },
   secret: process.env.NEXTAUTH_SECRET,
-  // debug: process.env.NODE_ENV === 'development',
+  debug: process.env.NODE_ENV === 'development',
 };
 
 const handler = NextAuth(authOptions);

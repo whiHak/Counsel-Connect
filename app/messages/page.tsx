@@ -177,7 +177,10 @@ export default function MessagesPage() {
     try {
       const response = await fetch("/api/meetings", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.user?.googleRefreshToken}`
+        },
         body: JSON.stringify({
           chatRoomId: selectedChat._id,
           type
@@ -191,6 +194,7 @@ export default function MessagesPage() {
             title: "Authorization Required",
             description: "Please authorize Google Calendar access first",
             variant: "destructive",
+            className:"bg-red-500 text-white",
           });
           // Redirect to Google authorization
           window.location.href = '/api/auth/google';
@@ -220,7 +224,7 @@ export default function MessagesPage() {
         title: "Meeting Created!",
         description: `Your ${type} call has been scheduled and started. Check your calendar for details.`,
         variant: "default",
-        className: "bg-gradient-to-r from-indigo-500 to-purple-500 text-white",
+        className: "bg-gradient-primary text-white",
       });
     } catch (error) {
       console.error("Error creating meeting:", error);
@@ -228,6 +232,7 @@ export default function MessagesPage() {
         title: "Error",
         description: "Failed to create meeting. Please try again.",
         variant: "destructive",
+        style: { backgroundColor: "red", color: "white" },
       });
     }
   };

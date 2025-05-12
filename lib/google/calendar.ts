@@ -16,7 +16,7 @@ const getOAuth2Client = () => {
 };
 
 export const createMeetingEvent = async (
-  userId: string,
+  refreshToken: string,
   title: string,
   description: string,
   startTime: Date,
@@ -24,19 +24,16 @@ export const createMeetingEvent = async (
   attendees: string[]
 ) => {
   try {
-    // Get user with refresh token
-    const user = await User.findById(userId).select('+googleCalendar.refreshToken');
-    
-    if (!user?.googleCalendar?.refreshToken) {
+    if (!refreshToken) {
       throw new Error('Google Calendar not authorized');
     }
 
     // Create new OAuth2 client for this request
     const oauth2Client = getOAuth2Client();
     
-    // Set credentials using user's refresh token
+    // Set credentials using the provided refresh token
     oauth2Client.setCredentials({
-      refresh_token: user.googleCalendar.refreshToken
+      refresh_token: refreshToken
     });
 
     // Create Calendar client with user's auth
@@ -77,15 +74,9 @@ export const createMeetingEvent = async (
     };
   } catch (error) {
     console.error('Error creating calendar event:', error);
-    // Handle token revocation or expiration
     const googleError = error as GoogleApiError;
     if (googleError.message?.includes('invalid_grant')) {
-      await User.findByIdAndUpdate(userId, {
-        $set: {
-          'googleCalendar.isConnected': false,
-          'googleCalendar.refreshToken': null
-        }
-      });
+      throw new Error('Google Calendar not authorized');
     }
     throw error;
   }

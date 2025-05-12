@@ -12,6 +12,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Get refresh token from Authorization header
+    const authHeader = req.headers.get('authorization');
+    const refreshToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+
+    if (!refreshToken) {
+      return NextResponse.json({ error: "Google Calendar not authorized" }, { status: 401 });
+    }
+
     await connectDB();
     const { chatRoomId, type } = await req.json();
 
@@ -23,7 +31,7 @@ export async function POST(req: NextRequest) {
 
     // Get both users' details for the meeting
     const [user1, user2] = await Promise.all([
-      User.findById(chatRoom.user1Id).select('+googleCalendar.isConnected'),
+      User.findById(chatRoom.user1Id),
       User.findById(chatRoom.user2Id)
     ]);
 
@@ -31,19 +39,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "User email not found" }, { status: 400 });
     }
 
-    // Check if the user has connected their Google Calendar
-    if (!user1.googleCalendar?.isConnected) {
-      return NextResponse.json({ error: "Google Calendar not authorized" }, { status: 401 });
-    }
-
     // Create event start and end times (30 minutes from now)
     const startTime = new Date();
-    const endTime = new Date(startTime.getTime() + 30 * 60000); // 30 minutes
+    const endTime = new Date(startTime.getTime() + 30 * 60000);
 
     try {
-      // Create calendar event with Meet link using the user's token
+      // Create calendar event with Meet link using the refresh token
       const { meetLink, eventLink, eventId } = await createMeetingEvent(
-        userId.toString(),
+        refreshToken,
         `${type.charAt(0).toUpperCase() + type.slice(1)} Call: ${user1.name} and ${user2.name}`,
         `${type} call between ${user1.name} and ${user2.name}`,
         startTime,
@@ -71,7 +74,7 @@ export async function POST(req: NextRequest) {
       });
     } catch (error: any) {
       console.error("Google Calendar Error:", error);
-      if (error.message?.includes('invalid_grant')) {
+      if (error.message === "Google Calendar not authorized") {
         return NextResponse.json({ error: "Google Calendar not authorized" }, { status: 401 });
       }
       throw error;
