@@ -6,7 +6,7 @@ import { ChatRoom, Message, User } from "@/lib/db/schema";
 export async function GET(req: NextRequest) {
   try {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-    if (!token?.userId) {
+    if (!token?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -15,14 +15,14 @@ export async function GET(req: NextRequest) {
     // Find all chat rooms where the user is either user1 or user2
     const chatRooms = await ChatRoom.find({
       $or: [
-        { user1Id: token.userId },
-        { user2Id: token.userId }
+        { user1Id: token.id },
+        { user2Id: token.id }
       ]
     }).sort({ lastMessageDate: -1 });
 
     // Get all other user IDs from the chat rooms
     const otherUserIds = chatRooms.map(room => 
-      room.user1Id.toString() === token.userId 
+      room.user1Id.toString() === token.id 
         ? room.user2Id 
         : room.user1Id
     );
@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
       chatRooms.map(async (room) => {
         return Message.countDocuments({
           chatRoomId: room._id,
-          receiverId: token.userId,
+          receiverId: token.id,
           read: false
         });
       })
@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
 
     // Format the response
     const formattedChatRooms = chatRooms.map((room, index) => {
-      const otherUserId = room.user1Id.toString() === token.userId 
+      const otherUserId = room.user1Id.toString() === token.id 
         ? room.user2Id 
         : room.user1Id;
       const otherUser = users.find(u => u._id.toString() === otherUserId.toString());

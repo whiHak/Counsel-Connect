@@ -6,14 +6,14 @@ import connectDB from "@/lib/db/connect";
 export async function GET(req: NextRequest) {
   try {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-    if (!token?.userId) {
+    if (!token?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     await connectDB();
 
     // Get client profile
-    const clientProfile = await ClientProfile.findOne({ userId: token.userId });
+    const clientProfile = await ClientProfile.findOne({ userId: token.id });
     if (!clientProfile) {
       // If no profile exists, return general recommendations
       const counselors = await Counselor.find()

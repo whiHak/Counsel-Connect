@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
       secret: process.env.NEXTAUTH_SECRET,
     });
 
-    if (!token?.userId) {
+    if (!token?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/counselors`,
       metadata: {
         counselorId: counselorId.toString(),
-        userId: token.userId.toString(),
+        userId: token.id.toString(),
         date: date.toString(),
         timeSlot,
         sessionType,

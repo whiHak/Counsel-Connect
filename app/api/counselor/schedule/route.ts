@@ -8,7 +8,11 @@ import { getToken } from "next-auth/jwt";
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET
+    });
+    console.log("Session:", token?.userId);
     if (!session?.user) {
       return NextResponse.json(
         { error: "Unauthorized" },
@@ -54,7 +58,7 @@ export async function GET(request: NextRequest) {
       secret: process.env.NEXTAUTH_SECRET
     })
 
-    if (!token?.userId) {
+    if (!token?.id) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -63,7 +67,7 @@ export async function GET(request: NextRequest) {
 
     await connectDB();
 
-    const counselor = await Counselor.findOne({ userId: token.userId });
+    const counselor = await Counselor.findOne({ userId: token.id });
 
     if (!counselor) {
       return NextResponse.json(
@@ -92,7 +96,7 @@ export async function PUT(req: NextRequest) {
       req: req,
       secret: process.env.NEXTAUTH_SECRET
     });
-    if (!token?.userId) {
+    if (!token?.id) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -115,7 +119,7 @@ export async function PUT(req: NextRequest) {
 
     // Update counselor's work preferences
     const updatedCounselor = await Counselor.findOneAndUpdate(
-      { userId: token.userId },
+      { userId: token.id },
       {
         $set: {
           'workPreferences.hourlyRate': hourlyRate,

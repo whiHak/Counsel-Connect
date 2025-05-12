@@ -6,7 +6,7 @@ import connectDB from "@/lib/db/connect";
 export async function POST(req: NextRequest) {
   try {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-    if (!token?.userId) {
+    if (!token?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     await Message.updateMany(
       {
         chatRoomId,
-        receiverId: token.userId,
+        receiverId: token.id,
         read: false
       },
       {

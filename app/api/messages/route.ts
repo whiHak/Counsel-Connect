@@ -6,7 +6,7 @@ import connectDB from "@/lib/db/connect";
 export async function POST(req: NextRequest) {
   try {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-    if (!token?.userId) {
+    if (!token?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -20,14 +20,14 @@ export async function POST(req: NextRequest) {
     } else {
       chatRoom = await ChatRoom.findOne({
         $or: [
-          { user1Id: token.userId, user2Id: receiverId },
-          { user1Id: receiverId, user2Id: token.userId }
+          { user1Id: token.id, user2Id: receiverId },
+          { user1Id: receiverId, user2Id: token.id }
         ]
       });
 
       if (!chatRoom) {
         chatRoom = await ChatRoom.create({
-          user1Id: token.userId,
+          user1Id: token.id,
           user2Id: receiverId,
           lastMessage: content,
           lastMessageDate: new Date()
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     // Create message
     const message = await Message.create({
       content,
-      senderId: token.userId,
+      senderId: token.id,
       receiverId,
       chatRoomId: chatRoom._id,
       read: false,
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-    if (!token?.userId) {
+    if (!token?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -79,7 +79,7 @@ export async function GET(req: NextRequest) {
 
     // Verify user is part of the chat room
     const chatRoom = await ChatRoom.findById(chatRoomId);
-    if (!chatRoom || (chatRoom.user1Id.toString() !== token.userId && chatRoom.user2Id.toString() !== token.userId)) {
+    if (!chatRoom || (chatRoom.user1Id.toString() !== token.id && chatRoom.user2Id.toString() !== token.id)) {
       return NextResponse.json({ error: "Unauthorized access to chat room" }, { status: 403 });
     }
 

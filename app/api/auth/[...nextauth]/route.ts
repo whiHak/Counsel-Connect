@@ -32,7 +32,7 @@ export const authOptions: NextAuthOptions = {
   },
   cookies: {
     sessionToken: {
-      name: `__Secure-next-auth.session-token`,
+      name: process.env.NODE_ENV === 'production' ? '__Secure-next-auth.session-token' : 'next-auth.session-token',
       options: {
         httpOnly: true,
         sameSite: 'lax',
@@ -41,16 +41,7 @@ export const authOptions: NextAuthOptions = {
       },
     },
     callbackUrl: {
-      name: `__Secure-next-auth.callback-url`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-      },
-    },
-    csrfToken: {
-      name: `__Host-next-auth.csrf-token`,
+      name: process.env.NODE_ENV === 'production' ? '__Secure-next-auth.callback-url' : 'next-auth.callback-url',
       options: {
         httpOnly: true,
         sameSite: 'lax',
@@ -60,37 +51,13 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
-    async jwt({ token, user, account, profile }) {
-      if (user) {
-        await connectDB();
-        const dbUser = await User.findOne({ email: user.email });
-        if (dbUser) {
-          token.role = dbUser.role;
-          token.isProfileComplete = dbUser.isProfileComplete;
-          token.userId = dbUser._id.toString();
-        }
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        await connectDB();
-        const dbUser = await User.findOne({ email: session.user.email });
-        if (dbUser) {
-          session.user.role = token.role;
-          session.user.isProfileComplete = token.isProfileComplete;
-          session.user.id = token.userId;
-        }
-      }
-      return session;
-    },
     async signIn({ user, account, profile }) {
-      if (account?.provider === 'google' || account?.provider === 'facebook' || account?.provider === 'github') {
+      try {
         await connectDB();
         const existingUser = await User.findOne({ email: user.email });
         
         if (!existingUser) {
-          await User.create({
+          const newUser = await User.create({
             email: user.email,
             name: user.name,
             image: user.image,
@@ -98,17 +65,47 @@ export const authOptions: NextAuthOptions = {
             isProfileComplete: false,
             role: 'CLIENT'
           });
+          user.id = newUser._id.toString();
+          user.role = newUser.role;
+          user.isProfileComplete = newUser.isProfileComplete;
+        } else {
+          user.id = existingUser._id.toString();
+          user.role = existingUser.role;
+          user.isProfileComplete = existingUser.isProfileComplete;
         }
+        return true;
+      } catch (error) {
+        console.error("SignIn error:", error);
+        return false;
       }
-      return true;
     },
+    async jwt({ token, user, account, trigger, session }) {
+      if (trigger === "signIn" && user) {
+        token.id = user.id;
+        token.role = user.role;
+        token.isProfileComplete = user.isProfileComplete;
+      } else if (trigger === "update" && session) {
+        // Handle session updates if needed
+        token.role = session.user.role;
+        token.isProfileComplete = session.user.isProfileComplete;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+        session.user.role = token.role as string;
+        session.user.isProfileComplete = token.isProfileComplete as boolean;
+      }
+      return session;
+    }
   },
   pages: {
     signIn: '/auth/signin',
     error: '/auth/error',
   },
   secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === 'development',
+  // debug: process.env.NODE_ENV === 'development',
 };
 
 const handler = NextAuth(authOptions);

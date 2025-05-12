@@ -6,7 +6,7 @@ import { User, Booking, Message, ChatRoom } from "@/lib/db/schema";
 export async function GET(req: NextRequest) {
   try {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-    if (!token?.userId) {
+    if (!token?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
 
     // Get all clients who have had sessions with this counselor
     const bookings = await Booking.find({
-      counselorId: token.userId,
+      counselorId: token.id,
       status: { $in: ["scheduled", "completed"] }
     }).populate("userId", "name email image");
 
@@ -25,20 +25,20 @@ export async function GET(req: NextRequest) {
     const clientSessions = await Promise.all(
       clientIds.map(async (clientId) => {
         const totalSessions = await Booking.countDocuments({
-          counselorId: token.userId,
+          counselorId: token.id,
           userId: clientId,
         });
 
         // Get the last interaction (message or booking)
         const lastChatRoom = await ChatRoom.findOne({
           $or: [
-            { user1Id: clientId, user2Id: token.userId },
-            { user1Id: token.userId, user2Id: clientId }
+            { user1Id: clientId, user2Id: token.id },
+            { user1Id: token.id, user2Id: clientId }
           ]
         }).sort({ lastMessageDate: -1 });
 
         const lastBooking = await Booking.findOne({
-          counselorId: token.userId,
+          counselorId: token.id,
           userId: clientId,
           status: { $in: ["scheduled", "completed"] }
         }).sort({ date: -1 });

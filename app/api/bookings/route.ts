@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
       secret: process.env.NEXTAUTH_SECRET,
     })
 
-    if (!token?.userId) {
+    if (!token?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
 
     // Create the booking
     const booking = await Booking.create({
-      userId: token.userId,
+      userId: token.id,
       counselorId,
       date: bookingDate,
       startTime,
@@ -93,13 +93,13 @@ export async function POST(req: NextRequest) {
     const chatRoom = await ChatRoom.findOneAndUpdate(
       {
         $or: [
-          { user1Id: token.userId, user2Id: counselorId },
-          { user1Id: counselorId, user2Id: token.userId },
+          { user1Id: token.id, user2Id: counselorId },
+          { user1Id: counselorId, user2Id: token.id },
         ],
       },
       {
         $setOnInsert: {
-          user1Id: token.userId,
+          user1Id: token.id,
           user2Id: counselorId,
           createdAt: new Date(),
         },
@@ -126,7 +126,7 @@ export async function GET(req: NextRequest) {
       req,
       secret: process.env.NEXTAUTH_SECRET,
     })
-    if (!token?.userId) {
+    if (!token?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -134,7 +134,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     
     const bookings = await Booking.find({
-      counselorId: token.userId,
+      counselorId: token.id,
       status: "scheduled" 
     })
     .sort({ date: 1, startTime: 1 })

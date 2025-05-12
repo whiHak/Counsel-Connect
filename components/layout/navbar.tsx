@@ -259,7 +259,7 @@ export function Navbar() {
                       <DropdownMenuItem onClick={() => signIn("google")} className="cursor-pointer">
                         <div className="relative w-5 h-5 mr-2">
                           <Image 
-                            src="/google.svg" 
+                            src="/google.png" 
                             alt="Google" 
                             fill
                             className="object-contain"

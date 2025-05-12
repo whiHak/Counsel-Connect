@@ -13,13 +13,14 @@ export async function GET(req: NextRequest) {
   try {
     // Get the authenticated user
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-    const userId = token?.userId;
+    const userId = token?.id;
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const url = new URL(req.url);
     const code = url.searchParams.get('code');
+    console.log('Received code:', code);
 
     if (!code) {
       return NextResponse.json({ error: 'No code provided' }, { status: 400 });

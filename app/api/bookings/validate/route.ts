@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
       secret: process.env.NEXTAUTH_SECRET,
     });
 
-    if (!token?.userId) {
+    if (!token?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

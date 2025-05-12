@@ -6,7 +6,7 @@ import { Booking, Message, ChatRoom, User } from "@/lib/db/schema";
 export async function GET(req: NextRequest) {
   try {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-    if (!token?.userId) {
+    if (!token?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
 
     // Get total sessions and earnings for last 30 days
     const bookings = await Booking.find({
-      counselorId: token.userId,
+      counselorId: token.id,
       date: { $gte: thirtyDaysAgo },
     });
 
@@ -27,14 +27,14 @@ export async function GET(req: NextRequest) {
 
     // Get active clients (clients with non-cancelled bookings in last 30 days)
     const activeClientsIds = await Booking.distinct("userId", {
-      counselorId: token.userId,
+      counselorId: token.id,
       date: { $gte: thirtyDaysAgo },
       status: { $ne: "CANCELLED" }
     });
 
     // Get average rating
     const completedBookings = await Booking.find({
-      counselorId: token.userId,
+      counselorId: token.id,
       status: "completed",
       rating: { $exists: true }
     });
@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
 
     // Get upcoming sessions
     const sessions = await Booking.find({
-      counselorId: token.userId,
+      counselorId: token.id,
       status: "scheduled" 
     })
     .sort({ date: 1, startTime: 1 })
@@ -89,8 +89,8 @@ export async function GET(req: NextRequest) {
     // Get recent messages
     const chatRooms = await ChatRoom.find({
       $or: [
-        { user1Id: token.userId },
-        { user2Id: token.userId }
+        { user1Id: token.id },
+        { user2Id: token.id }
       ]
     }).sort({ lastMessageDate: -1 }).limit(5);
 

@@ -10,6 +10,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function CounselorsPage() {
   const session = useSession();
+  console.log("Session data:", session.data?.user.role);
   const { t } = useLanguage();
   const [filters, setFilters] = useState<CounselorFilters>({
     search: "",
@@ -36,7 +37,7 @@ export default function CounselorsPage() {
         </aside>
         
         <main className="space-y-8">
-          {!hasActiveFilters && session.data?.user?.role === "CLIENT" &&(
+          {!hasActiveFilters && session.data?.user.role === "CLIENT" &&(
             <Suspense fallback={<CounselorListSkeleton />}>
               <RecommendedCounselors />
             </Suspense>

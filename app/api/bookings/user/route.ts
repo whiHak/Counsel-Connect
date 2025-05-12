@@ -10,14 +10,14 @@ export async function GET(req: NextRequest) {
       secret: process.env.NEXTAUTH_SECRET,
     });
 
-    if (!token?.userId) {
+    if (!token?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     await connectDB();
 
     // First, get all bookings for the user
-    const bookings = await Booking.find({ userId: token.userId })
+    const bookings = await Booking.find({ userId: token.id })
       .sort({ date: -1, startTime: 1 });
 
     // Then, for each booking, get the counselor details
