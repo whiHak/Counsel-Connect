@@ -209,7 +209,9 @@ export default function MessagesPage() {
       window.open(meetingLink, '_blank');
 
       // Send a system message about the meeting
-      const messageContent = `${session?.user?.name} started a ${type} call.\nJoin meeting: ${meetingLink}\nView calendar event: ${eventLink}`;
+      const messageContent = `${session?.user?.name} started a ${type} call.`;
+      const messageContent2 = `Join the meeting👉: ${meetingLink}`;
+      const messageContent3 = `Check your calendar for details: ${eventLink}`;
       await fetch("/api/messages", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -220,12 +222,32 @@ export default function MessagesPage() {
         }),
       });
 
+      await fetch("/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content: messageContent2,
+          receiverId: selectedChat.user._id,
+          chatRoomId: selectedChat._id
+        }),
+      });
+
+      await fetch("/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content: messageContent3,
+          receiverId: selectedChat.user._id,
+          chatRoomId: selectedChat._id
+        }),
+      });
       toast({
         title: "Meeting Created!",
         description: `Your ${type} call has been scheduled and started. Check your calendar for details.`,
         variant: "default",
         className: "bg-gradient-primary text-white",
       });
+      window.open(meetingLink, '_blank');
     } catch (error) {
       console.error("Error creating meeting:", error);
       toast({
