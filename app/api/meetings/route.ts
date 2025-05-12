@@ -7,7 +7,8 @@ import { createMeetingEvent } from "@/lib/google/calendar";
 export async function POST(req: NextRequest) {
   try {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-    if (!token?.userId) {
+    const userId = token?.sub;
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -16,18 +17,13 @@ export async function POST(req: NextRequest) {
 
     // Verify user is part of the chat room
     const chatRoom = await ChatRoom.findById(chatRoomId);
-    if (!chatRoom || (chatRoom.user1Id.toString() !== token.userId && chatRoom.user2Id.toString() !== token.userId)) {
+    if (!chatRoom || (chatRoom.user1Id.toString() !== userId && chatRoom.user2Id.toString() !== userId)) {
       return NextResponse.json({ error: "Unauthorized access to chat room" }, { status: 403 });
-    }
-
-    // Check if Google Calendar credentials are set
-    if (!process.env.GOOGLE_REFRESH_TOKEN) {
-      return NextResponse.json({ error: "Google Calendar not authorized" }, { status: 401 });
     }
 
     // Get both users' details for the meeting
     const [user1, user2] = await Promise.all([
-      User.findById(chatRoom.user1Id),
+      User.findById(chatRoom.user1Id).select('+googleCalendar.isConnected'),
       User.findById(chatRoom.user2Id)
     ]);
 
@@ -35,13 +31,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "User email not found" }, { status: 400 });
     }
 
+    // Check if the user has connected their Google Calendar
+    if (!user1.googleCalendar?.isConnected) {
+      return NextResponse.json({ error: "Google Calendar not authorized" }, { status: 401 });
+    }
+
     // Create event start and end times (30 minutes from now)
     const startTime = new Date();
     const endTime = new Date(startTime.getTime() + 30 * 60000); // 30 minutes
 
     try {
-      // Create calendar event with Meet link
+      // Create calendar event with Meet link using the user's token
       const { meetLink, eventLink, eventId } = await createMeetingEvent(
+        userId,
         `${type.charAt(0).toUpperCase() + type.slice(1)} Call: ${user1.name} and ${user2.name}`,
         `${type} call between ${user1.name} and ${user2.name}`,
         startTime,
@@ -58,7 +60,7 @@ export async function POST(req: NextRequest) {
             eventLink: eventLink,
             eventId: eventId,
             createdAt: new Date(),
-            createdBy: token.userId
+            createdBy: userId
           }
         }
       });

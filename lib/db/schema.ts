@@ -18,6 +18,17 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  googleCalendar: {
+    refreshToken: {
+      type: String,
+      select: false // This ensures the token isn't included in regular queries
+    },
+    isConnected: {
+      type: Boolean,
+      default: false
+    },
+    lastSync: Date
+  },
   createdAt: {
     type: Date,
     default: Date.now
