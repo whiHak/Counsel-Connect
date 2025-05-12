@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   try {
     // Get the authenticated user
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-    const userId = token?.sub;
+    const userId = token?.userId;
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Store the refresh token for the user
-    await storeUserRefreshToken(userId, refreshToken);
+    await storeUserRefreshToken(userId.toString(), refreshToken);
 
     // Redirect back to the messages page with success message
     return NextResponse.redirect(new URL('/messages?calendar=connected', req.url));
