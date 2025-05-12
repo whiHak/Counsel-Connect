@@ -7,7 +7,7 @@ import { createMeetingEvent } from "@/lib/google/calendar";
 export async function POST(req: NextRequest) {
   try {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-    const userId = token?.sub;
+    const userId = token?.userId;
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
     try {
       // Create calendar event with Meet link using the user's token
       const { meetLink, eventLink, eventId } = await createMeetingEvent(
-        userId,
+        userId.toString(),
         `${type.charAt(0).toUpperCase() + type.slice(1)} Call: ${user1.name} and ${user2.name}`,
         `${type} call between ${user1.name} and ${user2.name}`,
         startTime,
