@@ -7,6 +7,8 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect, useState } from "react";
+import { signIn, useSession } from "next-auth/react";
+import { useToast } from "@/components/ui/use-toast";
 
 const features = [
   {
@@ -47,9 +49,12 @@ const staggerContainer = {
 };
 
 export default function Home() {
+  const { data: session } = useSession();
   const { t } = useLanguage();
   const benefits = t('benefits.items');
   const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
+
 
   useEffect(() => {
     if (Array.isArray(benefits)) {
@@ -107,7 +112,18 @@ export default function Home() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Button size="lg" className="bg-gradient-primary hover:opacity-90 text-white" asChild>
-                  <Link href="/counselors" className="z-10">
+                  <Link href="/counselors" className="z-10"onClick={(e) => {
+                    if (!session) {
+                      e.preventDefault();
+                      toast({
+                        title: "Please login first",
+                        description: "You need to be logged in to access this page",
+                        variant: "destructive",
+                        style:{backgroundColor: "#f8d7da", color: "#721c24"},
+                      });
+                      signIn("google");
+                    }
+                  }}>
                     {t('hero.findCounselor')} <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
