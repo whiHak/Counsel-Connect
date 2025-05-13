@@ -5,7 +5,6 @@ import GithubProvider from 'next-auth/providers/github';
 import { User } from '@/lib/db/schema';
 import connectDB from '@/lib/db/connect';
 import { NextAuthOptions } from "next-auth";
-import { storeUserRefreshToken } from "@/lib/google/calendar";
 
 export const authOptions: NextAuthOptions = {
   providers: [

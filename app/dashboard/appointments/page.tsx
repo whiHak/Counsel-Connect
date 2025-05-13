@@ -102,12 +102,14 @@ export default function AppointmentsPage() {
       toast({
         title: "Success",
         description: `Booking ${status} successfully`,
+        className: "bg-green-500 text-white",
       });
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to update booking",
         variant: "destructive",
+        className: "bg-red-500 text-white",
       });
     }
   };
@@ -186,9 +188,6 @@ export default function AppointmentsPage() {
     );
     return bDateTime.getTime() - aDateTime.getTime();
   });
-
-
-  console.log(upcomingBookings, pastBookings);
   return (
     <div className="space-y-8">
       <div>

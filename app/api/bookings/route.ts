@@ -135,7 +135,6 @@ export async function GET(req: NextRequest) {
     
     const bookings = await Booking.find({
       counselorId: token.id,
-      status: "scheduled" 
     })
     .sort({ date: 1, startTime: 1 })
     .limit(5)
@@ -158,7 +157,7 @@ export async function PUT(req: NextRequest) {
       req,
       secret: process.env.NEXTAUTH_SECRET,
     })
-    if (!token?.userId) {
+    if (!token?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
