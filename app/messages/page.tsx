@@ -259,6 +259,72 @@ export default function MessagesPage() {
     }
   };
 
+  const renderMessageContent = (content: string) => {
+    // Regular expression to match URLs
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    
+    if (content.includes('Join the meeting👉:')) {
+      const parts = content.split('Join the meeting👉:');
+      return (
+        <>
+          {parts[0]}
+          {parts[1] && (
+            <>
+              Join the meeting👉:{' '}
+              <a 
+                href={parts[1].trim()} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-600 underline"
+              >
+                Click here to join
+              </a>
+            </>
+          )}
+        </>
+      );
+    } else if (content.includes('Check your calendar for details:')) {
+      const parts = content.split('Check your calendar for details:');
+      return (
+        <>
+          {parts[0]}
+          {parts[1] && (
+            <>
+              Check your calendar for details:{' '}
+              <a 
+                href={parts[1].trim()} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-600 underline"
+              >
+                View in Calendar
+              </a>
+            </>
+          )}
+        </>
+      );
+    } else if (urlRegex.test(content)) {
+      return content.split(urlRegex).map((part, index) => {
+        if (urlRegex.test(part)) {
+          return (
+            <a
+              key={index}
+              href={part}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:text-blue-600 underline"
+            >
+              {part}
+            </a>
+          );
+        }
+        return part;
+      });
+    }
+    
+    return content;
+  };
+
   return (
     <div className="flex h-[calc(100vh-4rem)] container mx-auto gap-4 p-4">
       {/* Chat List */}
@@ -369,7 +435,7 @@ export default function MessagesPage() {
                         : "bg-white rounded-tl-none"
                     }`}
                   >
-                    <p>{message.content}</p>
+                    <p>{renderMessageContent(message.content)}</p>
                     <p className={`text-xs mt-1 ${
                       message.senderId === session?.user?.id
                         ? "text-indigo-100"
