@@ -73,6 +73,10 @@
     "searchResults": "የፍለጋ ውጤቶች",
     "filters": {
       "title": "ማጣሪያዎች",
+      "ai-title": "AI ጋር የሚስማማውን ይፈልጉ",
+      "ai-placeholder": "ስለ እርስዎ ሁኔታ ይንገሩን ...ዛሬ እዚህ ምን አመጣዎት? ",
+      "ai-match": "የሚስማማ አማካሪዎች ይፈልጉ",
+      "ai-match-loading": "ማመሳሰል ላይ...",
       "search": "አማካሪዎችን ይፈልጉ...",
       "specialization": "ስፔሻላይዜሽን",
       "language": "ቋንቋ",

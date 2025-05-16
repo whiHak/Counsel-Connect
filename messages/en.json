@@ -73,6 +73,10 @@
     "searchResults": "Search Results",
     "filters": {
       "title": "Filters & Preferences",
+      "ai-title": "Find Your Perfect Match with AI",
+      "ai-placeholder": "Tell us about your case... What brings you here today?",
+      "ai-match": "Find Best Matches",
+      "ai-match-loading": "Matching...",
       "search": "Search counselors...",
       "specialization": "Specialization",
       "language": "Language",

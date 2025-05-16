@@ -122,6 +122,11 @@ const counselorSchema = new mongoose.Schema({
       },
     },
   ],
+  plot_embedding: {
+    type: [Number],
+    index: true,
+    sparse: true,
+  },
 });
 
 const messageSchema = new mongoose.Schema({

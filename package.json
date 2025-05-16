@@ -10,6 +10,9 @@
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.8.0",
+    "@azure-rest/ai-inference": "^1.0.0-beta.6",
+    "@azure/core-auth": "^1.9.0",
+    "@azure/core-sse": "^2.2.0",
     "@hookform/resolvers": "^5.0.1",
     "@prisma/client": "^6.6.0",
     "@radix-ui/react-avatar": "^1.1.6",
@@ -28,6 +31,7 @@
     "clsx": "^2.1.1",
     "counsler-app": "file:",
     "date-fns": "^4.1.0",
+    "dotenv": "^16.5.0",
     "framer-motion": "^12.7.4",
     "google-auth-library": "^9.15.1",
     "googleapis": "^148.0.0",
@@ -36,6 +40,7 @@
     "mongoose": "^8.13.2",
     "next": "^15.3.1",
     "next-auth": "^4.24.11",
+    "openai": "^4.98.0",
     "react": "^19.0.0",
     "react-day-picker": "^9.6.7",
     "react-dom": "^19.0.0",
@@ -45,6 +50,7 @@
     "stripe": "^18.1.0",
     "tailwind-merge": "^3.2.0",
     "tailwindcss-animate": "^1.0.7",
+    "ts-node": "^10.9.2",
     "uploadthing": "^7.6.0",
     "uuid": "^11.1.0",
     "zod": "^3.24.3"
@@ -56,5 +62,6 @@
     "@types/react-dom": "^19",
     "tailwindcss": "^4",
     "typescript": "^5"
-  }
+  },
+  "type": "module"
 }
