@@ -42,7 +42,7 @@ export default function DashboardLayout({
   }, [isMobile, isOpen]);
 
   return (
-    <div className="min-h-screen bg-gray-50/30">
+    <div className="container mx-auto min-h-screen bg-gray-50/30">
       {/* Overlay */}
       {isOpen && (
         <div 

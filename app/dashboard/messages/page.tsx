@@ -74,7 +74,7 @@ export default function MessagesPage() {
             <Card
               key={chatRoom._id}
               className="hover:bg-muted/50 transition-colors cursor-pointer"
-              onClick={() => router.push(`/chat/${chatRoom._id}`)}
+              onClick={() => router.push(`/messages`)}
             >
               <CardContent className="flex items-center gap-4 p-4">
                 <Avatar className="h-12 w-12">

@@ -62,7 +62,7 @@ export default function AIMatchPrompt({ onMatchResults }: AIMatchPromptProps) {
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {t('counselors.filters.ai-loading')}
+              {t('counselors.filters.ai-match-loading')}
             </>
           ) : (
             <>
